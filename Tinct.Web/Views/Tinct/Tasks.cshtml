@@ -1,0 +1,72 @@
+﻿@{
+    ViewBag.Title = "Tasks";
+}
+
+<h2>Tasks</h2>
+
+<table class="table table-striped">
+    <tr>
+        <th>
+            ID
+        </th>
+        <th>
+            Name
+        </th>
+        <th>
+            Controller
+        </th>
+        <th>
+            Action
+        </th>
+        <th>
+            Priority
+        </th>
+        <th>
+            TaskStatus
+        </th>
+        <th>
+            CreateTime
+        </th>
+        <th>
+            ExcuteTime
+        </th>
+        <th>
+            EndTime
+        </th>
+    </tr>
+    @foreach (var item in ViewBag.TaskInfosLists)
+    {
+        <tr>
+            <td>
+                @item.ID
+            </td>
+            <td>
+                @item.Name
+            </td>
+            <td>
+                @item.Context.ControllerName
+            </td>
+            <td>
+                @item.Context.ActionName
+            </td>
+            <td>
+                @item.Priority
+            </td>
+            <td>
+                @item.Status
+            </td>
+            <td>
+                @item.CreateTime
+            </td>
+            <td>
+                @(item.StartTime == DateTime.MinValue ? "" : item.StartTime)
+            </td>
+            <td>
+                @(item.EndTime == DateTime.MinValue ? "" : item.EndTime)
+            </td>
+        </tr>
+
+    }
+
+</table>
+

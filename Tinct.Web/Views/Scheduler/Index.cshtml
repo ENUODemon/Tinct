@@ -1,0 +1,259 @@
+﻿@{
+    ViewBag.Title = "Scheduler";
+}
+<h2>Task Scheduler</h2>
+<head>
+    <script src="~/Scripts/jquery-1.10.2.js"></script>
+    <script src="~/Scripts/jquery-ui-1.11.4.js"></script>
+    <link href="~/Content/bootstrap-datetimepicker.css" rel="stylesheet" media="screen" />
+    <script src="~/Scripts/bootstrap-datetimepicker.min.js" charset="UTF-8"></script>
+</head>
+<body>
+    <table class="table table-striped">
+        <tr>
+            <th>Name</th>
+            <th>
+                Status
+            </th>
+            <th>
+                Platform
+            </th>
+            <th>
+                Next Run Time
+            </th>
+            <th>
+                Last Run Time
+            </th>
+            @*<th>
+                    Interval
+                </th>*@
+            <th>
+                Created
+            </th>
+            <th>
+                Operation
+            </th>
+        </tr>
+        @foreach (var item in ViewBag.PlatformSettingList)
+        {
+            <tr>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Status
+                </td>
+                <td>
+                    @item.PlatformName
+                </td>
+                <td>
+                    @item.NextRunTime
+                </td>
+                <td>
+                    @item.LastRunTime
+                </td>
+                <td>
+                    @item.CreatedTime
+                </td>
+                <td>
+                    <input type="button" class="btn btn-sm btn-default" value="Run" id="runBtn" />
+                    <a href="/Scheduler/End" class="btn btn-sm btn-default">End</a>
+                    <input type="button" class="btn btn-sm btn-default" value="Delete" id="delBtn" />
+                </td>
+            </tr>
+        }
+        @*<tr>
+                <td colspan="7" align="right">
+                    <input type="button" value="Create Task" onclick="ShowAddTaskForm()" />
+                </td>
+            </tr>*@
+    </table>
+    <form action="" method="post" id="SchedulerForm">
+        <table class="table table-striped">
+            <tr>
+                <td width="30%">
+                    Name:
+                </td>
+                <td>
+                    <input type="text" id="nameTxt" name="Name" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Platform:
+                </td>
+                <td>
+                    <input type="text" id="platformTxt" name="PlatformName" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="radio">
+                        <div>
+                            <input type="radio" id="onceRadio" name="radio" checked="checked">
+                            <label for="radio1">One time</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="dailyRadio" name="radio">
+                            <label for="radio2">Daily</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="weeklyRadio" name="radio">
+                            <label for="radio3">Weekly</label>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <div>
+                            StartTime:
+                        </div>
+                        <div id="datepickerDiv" style="margin-left:-15px">
+                            <div class="input-group date form_datetime col-md-4" data-date="">
+                                <input class="form-control" size="16" type="text" value="" id="firstRunTimeTxt">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                            </div>
+                            @*<input type="text" value="08:00:00"/>*@
+                        </div>
+
+                    </div>
+                    <div id="dailySettingDiv" class="detailTimeSettingDiv">
+                        Recur every:
+                        <input type="text" id="intervalTxt" name="Interval" class="intervalTxtbox" value="1" />days
+                    </div>
+                    <div id="weeklySettingDiv" class="detailTimeSettingDiv">
+                        <div>
+                            Recur every:
+                            <input type="text" id="intervalTxt2" name="IntervalMonths" class="intervalTxtbox" value="1" />weeks on:
+                        </div>
+                        <div>
+                            <input type="checkbox" id="check1">
+                            <label for="check1">Sunday</label>
+                            <input type="checkbox" id="check2">
+                            <label for="check2">Monday</label>
+                            <input type="checkbox" id="check3">
+                            <label for="check3">Tuesday</label>
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" id="okBtn" value="OK" />
+                </td>
+                <td>
+                    <input type="submit" id="cancelBtn" value="Cancel" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</body>
+
+<style type="text/css">
+    .intervalTxtbox {
+        width: 50px;
+    }
+
+    .detailTimeSettingDiv {
+        display: none;
+        margin-top: 40px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        StartTimer();
+    });
+    function StartTimer() {
+        $.get("/Scheduler/StartTimer", function () {
+        });
+    }
+    $("#delBtn").click(function () {
+        if (confirm("Do you want to delete this task?")) {
+            $currentRow = $(this).parent().parent();
+            var taskName = $currentRow.children().first().text().trim();
+            $.post("/Scheduler/DeleteTask", { taskName: taskName }, function () {
+                window.location.reload();
+            });
+        }
+    });
+    $("#runBtn").click(function () {
+        $currentRow = $(this).parent().parent();
+        var taskName = $currentRow.children().first().text().trim();
+        $.post("/Scheduler/RunTask", { taskName: taskName }, function () {
+            window.location.reload();
+        })
+    });
+    $(".intervalTxtbox").keypress(function () {
+        if (isNaN($(".intervalTxtbox").val())) {
+            $(".intervalTxtbox").val("");
+        }
+    }).focusout(function () {
+        if ($(".intervalTxtbox").val() <= 0) {
+            window.alert("Enter a numberical value lager than 0");
+        }
+    })
+    $("#okBtn").click(function () {
+        var platformPara = {
+            Name: $("#nameTxt").val(),
+            Status: null,
+            PlatformName: $("#platformTxt").val(),
+            LastRunTime: null,
+            NextRunTime: null,
+            CreatedTime: null,
+            ExactRunTime: $("#firstRunTimeTxt").val(),
+            Interval: $("#intervalTxt").val()
+        }
+        $.ajaxSetup({ async: false })
+        $.post("/Scheduler/SetScheduler", { datas: JSON.stringify(platformPara) }, function (isSuccess) {
+            if (!isSuccess) {
+                window.alert("Task with this name already exists!");
+            }
+            window.location.reload();
+        })
+    });
+
+    $("#cancelBtn").click(function () {
+        window.location.reload();
+    });
+
+    $("input[name=radio]").click(function () {
+        showSettingDiv();
+    });
+
+    function showSettingDiv() {
+        $("#dailySettingDiv").hide();
+        $("#weeklySettingDiv").hide();
+        switch ($("input[name=radio]:checked").attr("id")) {
+            case "dailyRadio":
+                $("#dailySettingDiv").show();
+                break;
+            case "weeklyRadio":
+                $("#weeklySettingDiv").show();
+                break;
+            default:
+                break;
+        }
+    }
+    $('.form_datetime').datetimepicker({
+        format: "mm/dd/yyyy HH:mm:ss",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        //startView: 2,
+        //minView: 2,
+        //forceParse: 0
+    });
+
+    //function OpenCreateNew()
+    //{
+    //    $.get("").then(
+    //        function (r) {
+
+    //        }
+    //        );
+
+    //}
+</script>

@@ -1,0 +1,134 @@
+﻿@{
+    ViewBag.Title = "Tasks";
+}
+
+<h2>Tasks</h2>
+
+<form action="/TinctTask/SearchTasks" method="post">
+    <div style="float:right">
+        <input class="btn btn-default" type="submit" value="Search" onclick="searchTask()">
+    </div>
+    <div class="col-sm-3" style="float:right">
+        <input type="text" class="form-control" name="SearchContent" />
+    </div>
+ </form>
+    <table class="table table-striped">
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th onclick="sortByController()">
+                Controller
+            </th>
+            <th>
+                Action
+            </th>
+            <th>
+                TaskStatus
+            </th>
+            <th>
+                CreateTime
+            </th>
+            <th>
+                ExcuteTime
+            </th>
+            <th>
+                EndTime
+            </th>
+        </tr>
+        @foreach (var item in ViewBag.TaskInfosLists)
+        {
+            <tr>
+                <td>
+                    @item.ID
+                </td>
+                <td>
+                    @item.Name
+                </td>
+                <td>
+                    @item.Context.ControllerName
+                </td>
+                <td>
+                    @item.Context.ActionName
+                </td>
+                <td>
+                    @item.Status
+                </td>
+                <td>
+                    @item.CreateTime
+                </td>
+                <td>
+                    @(item.StartTime == DateTime.MinValue ? "" : item.StartTime)
+                </td>
+                <td>
+                    @(item.EndTime == DateTime.MinValue ? "" : item.EndTime)
+                </td>
+            </tr>
+
+        }
+
+    </table>
+
+<form action="/TinctTask/SortTasks" method="post" name="sort">
+    <input type="hidden" name="SortName" value="@ViewBag.SortName" />
+    <input type="hidden" name="SortDirection" value="@ViewBag.SortDirection">
+</form>
+
+<form action="/TinctTask/TasksPaging" method="post" name="page">
+    <input type="hidden" name="PageIndex" value="@ViewBag.PageIndex" />
+    <input type="hidden" name="SortName" value="@ViewBag.SortName" />
+    <input type="hidden" name="SortDirection" value="@ViewBag.SortDirection">
+    <input type="hidden" name="SearchContent" value="@ViewBag.SortDirection">
+
+
+</form>
+
+
+
+
+
+    <nav>
+        <ul class="pager" style="text-align:right">
+            <li>
+                <input class="form-control" id="page" value="@ViewBag.PageIndex" type="text" style="display:inline;width:4%" />
+
+            </li>
+            <li>
+                <a onclick="goPage()">Go</a>
+            </li>
+            <li><a onclick="prev()">Previous</a></li>
+            <li><a onclick="next()">Next</a></li>
+
+        </ul>
+    </nav>
+
+    <script type="text/javascript">
+
+
+        function sortByController() {
+
+
+            document.getElementsByName("SortName")[0].value = "Controller";
+            document.getElementsByName("PageIndex")[0].value = document.getElementById("page").value;
+            document.forms["sort"].submit();
+        }
+
+        function goPage() {
+            document.getElementsByName("PageIndex")[0].value = document.getElementById("page").value;
+            document.forms["page"].submit();
+        }
+
+        function prev() {
+            document.getElementsByName("PageIndex")[0].value--;
+            if (document.getElementsByName("PageIndex")[0].value < 1)
+                document.getElementsByName("PageIndex")[0].value = 1;
+            document.forms["page"].submit();
+        }
+        function next() {
+            document.getElementsByName("PageIndex")[0].value++;
+            document.forms["page"].submit();
+        }
+    </script>

@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BE64FE3D-47E6-407B-A443-3E23C3B91EFB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Tinct.Net.Communication</RootNamespace>
+    <AssemblyName>Tinct.Net.Communication</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Connect\TinctConnect.cs" />
+    <Compile Include="Connect\ReceiveMessageArgs.cs" />
+    <Compile Include="Interface\IMessageHandler.cs" />
+    <Compile Include="Interface\IUnConnectNodeHandler.cs" />
+    <Compile Include="Interface\IMasterConnect.cs" />
+    <Compile Include="Interface\INodeRepository.cs" />
+    <Compile Include="Interface\ISlaveConnect.cs" />
+    <Compile Include="Interface\ITinctConnect.cs" />
+    <Compile Include="Master\MDeployMessageHandler.cs" />
+    <Compile Include="Master\MUnConnectHandler.cs" />
+    <Compile Include="Master\MMessageHander.cs" />
+    <Compile Include="Master\TinctMasterNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Master\MasterNode.cs" />
+    <Compile Include="Node\NodeRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Slave\DeployMessageHandler.cs" />
+    <Compile Include="Slave\RunCarrier.cs" />
+    <Compile Include="Slave\SlaveLogManger.cs" />
+    <Compile Include="Slave\SlaveNode.cs" />
+    <Compile Include="Slave\SMessageHandler.cs" />
+    <Compile Include="Slave\TinctSlaveNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tinct.Common\Tinct.Common.csproj">
+      <Project>{dfd232e0-bef9-4ed0-8b57-651f9dd06a0f}</Project>
+      <Name>Tinct.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tinct.Net.MessageDispath\Tinct.Net.MessageDispath.csproj">
+      <Project>{381008c6-e83c-4898-8f14-43985cbf49bf}</Project>
+      <Name>Tinct.Net.MessageDispath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tinct.Net.Message\Tinct.Net.Message.csproj">
+      <Project>{8d89ea73-d087-4d18-b325-43e1f709704d}</Project>
+      <Name>Tinct.Net.Message</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
