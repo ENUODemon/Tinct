@@ -215,7 +215,7 @@
     <Content Include="Views\Scheduler\Index.cshtml">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="Views\Tinct\Tasks.cshtml" />
+    <None Include="Views\Tinct\Tasks.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

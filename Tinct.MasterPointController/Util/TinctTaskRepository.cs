@@ -46,7 +46,7 @@ namespace Tinct.TinctTaskMangement.TinctWork
             Current = this;
         }
 
-        public List<TinctTask> GetCurrentTinctTasks()
+        public IEnumerable<TinctTask> GetCurrentTinctTasks()
         {
             return tinctTasks;
         }

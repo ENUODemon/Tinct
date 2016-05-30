@@ -17,7 +17,7 @@ namespace Tinct.TinctTaskMangement.Interface
         /// Get Current TinctTask List
         /// </summary>
         /// <returns></returns>
-        List<TinctTask> GetCurrentTinctTasks();
+        IEnumerable<TinctTask> GetCurrentTinctTasks();
         /// <summary>
         /// add task
         /// </summary>

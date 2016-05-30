@@ -138,14 +138,18 @@ namespace Tinct.Web.Controllers
             if (id == null)
             {
                 ViewBag.Title = "Nodes";
-                ViewBag.TaskInfosLists = taskInfosLists;
+
 
             }
             else
             {
                 ViewBag.Title = id;
-                ViewBag.TaskInfosLists = taskInfosLists.Select(item => item.ID == new Guid(id));
+                taskInfosLists = taskInfosLists.Where(item => item.ID == new Guid(id));
             }
+            Newtonsoft.Json.JsonSerializer js = new Newtonsoft.Json.JsonSerializer();
+            StringWriter sw = new StringWriter();
+            js.Serialize(sw, taskInfosLists);
+            ViewBag.TaskInfosLists =sw.GetStringBuilder().ToString();
 
             return View();
 

@@ -1,10 +1,11 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Tasks";
 }
 
 <h2>Tasks</h2>
 
-<table class="table table-striped">
+<table class="table table-striped" name="tasksTable">
     <tr>
         <th>
             ID
@@ -12,61 +13,151 @@
         <th>
             Name
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex, "Context.ControllerName", this)'>
             Controller
         </th>
-        <th>
+        <th  onclick='tasksPage(pagesize, pageindex, "Context.ActionName", this)' >
             Action
         </th>
         <th>
             Priority
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex, "Status", this)'>
             TaskStatus
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex, "CreateTime", this)'>
             CreateTime
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex, "StartTime", this)'>
             ExcuteTime
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex, "EndTime", this)'>
             EndTime
         </th>
     </tr>
-    @foreach (var item in ViewBag.TaskInfosLists)
-    {
-        <tr>
-            <td>
-                @item.ID
-            </td>
-            <td>
-                @item.Name
-            </td>
-            <td>
-                @item.Context.ControllerName
-            </td>
-            <td>
-                @item.Context.ActionName
-            </td>
-            <td>
-                @item.Priority
-            </td>
-            <td>
-                @item.Status
-            </td>
-            <td>
-                @item.CreateTime
-            </td>
-            <td>
-                @(item.StartTime == DateTime.MinValue ? "" : item.StartTime)
-            </td>
-            <td>
-                @(item.EndTime == DateTime.MinValue ? "" : item.EndTime)
-            </td>
-        </tr>
+</table>
+<nav>
+    <ul class="pager" style="text-align:right">
+        <li>
+            <input class="form-control" id="page" value="1" type="text" style="display:inline;width:4%" name="pageindex" />
 
+        </li>
+        <li>
+            <a onclick="goPage()">Go</a>
+        </li>
+        <li><a onclick="prev()">Previous</a></li>
+        <li><a onclick="next()">Next</a></li>
+
+    </ul>
+</nav>
+<input type="hidden" value='@Html.Raw(ViewBag.TaskInfosLists)' name="taskInfoLists" />
+<script type="text/javascript">
+
+    function formatDatetime(datestring) {
+
+        var date = new Date(datestring);
+        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds();
     }
 
-</table>
+    var by = function (name, sortDirection) {
+        return function (a, b) {
+            if (sortDirection == "asc") {
+               
+                if (name.indexOf('.') > 0)
+                {
+                    name = name.split('.');
+                    return  a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
+                } 
+                if (name.length > 1 && typeof name != 'string')
+                {
+                    return a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
+                }
+                return a[name].localeCompare(b[name]);
+            }
+            else if (sortDirection == "desc") {
+
+                if (name.indexOf('.') > 0) {
+                    name = name.split('.');
+                    return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
+                }
+                if (name.length > 1&&typeof name!='string') {
+                    return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
+                }
+                return b[name].localeCompare(a[name]);
+            }
+        }
+    }
+
+
+
+    function goPage() {
+        pageindex = document.getElementsByName("pageindex")[0].value;
+        tasksPage(pagesize, pageindex);
+    }
+
+    function prev() {
+        if (pageindex > 1) {
+            pageindex--;
+        }
+
+        tasksPage(pagesize, pageindex);
+        document.getElementsByName("pageindex")[0].value = pageindex;
+    }
+
+
+    function next() {
+        pageindex++;
+        tasksPage(pagesize, pageindex);
+        document.getElementsByName("pageindex")[0].value = pageindex;
+    }
+
+
+
+    var tasks = JSON.parse(document.getElementsByName("taskInfoLists")[0].value);
+    var pageindex = 1;
+    var pagesize = 2;
+
+
+    function tasksPage(pagesize, pageindex, sortName, object) {
+        if (object != undefined) {
+            if (object.sortDirection == undefined) {
+                object.sortDirection = "asc";
+            }
+            else if (object.sortDirection == "asc") {
+                object.sortDirection = "desc";
+            }
+            else if (object.sortDirection == "desc") {
+                object.sortDirection = "asc";
+            }
+
+            tasks = tasks.sort(by(sortName, object.sortDirection))
+        }
+
+        var pagetasks = tasks.slice(pagesize * (pageindex - 1), pagesize * pageindex);
+
+        $(document.getElementsByName("taskinfo")).remove();
+        var table = document.getElementsByName("tasksTable")[0];
+
+
+
+        $.each(pagetasks, function f(k, v) {
+
+            var ele = $('<tr name="taskinfo"></tr>');
+            ele.append('<td>' + v.ID + '</td>');
+            ele.append('<td>' + v.Name + '</td>');
+            ele.append('<td>' + v.Context.ControllerName + '</td>');
+            ele.append('<td>' + v.Context.ActionName + '</td>');
+            ele.append('<td>' + v.Priority + '</td>');
+            ele.append('<td>' + v.Status + '</td>');
+            ele.append('<td>' + formatDatetime(v.CreateTime) + '</td>');
+            ele.append('<td>' + formatDatetime(v.StartTime) + '</td>');
+            ele.append('<td>' + formatDatetime(v.EndTime) + '</td>');
+            $(table).append(ele);
+        });
+
+
+    }
+    tasksPage(pagesize, pageindex);
+</script>
+
 
