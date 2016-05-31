@@ -5,6 +5,16 @@
 
 <h2>Tasks</h2>
 
+<div class="form-inline" >
+    <div style="float:right" class="form-group">
+        <input type="button" class="btn btn-default" value="Search"   onclick="searchTasks(document.getElementsByName('searchContent')[0].value)" />
+    </div>
+    <div style="float:right" class="form-group">
+        <input type="text" class="form-control" name="searchContent"/>
+    </div>
+    
+   
+</div>
 <table class="table table-striped" name="tasksTable">
     <tr>
         <th>
@@ -13,25 +23,25 @@
         <th>
             Name
         </th>
-        <th onclick='tasksPage(pagesize, pageindex, "Context.ControllerName", this)'>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ControllerName", this)'>
             Controller
         </th>
-        <th  onclick='tasksPage(pagesize, pageindex, "Context.ActionName", this)' >
+        <th  onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ActionName", this)' >
             Action
         </th>
         <th>
             Priority
         </th>
-        <th onclick='tasksPage(pagesize, pageindex, "Status", this)'>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Status", this)'>
             TaskStatus
         </th>
-        <th onclick='tasksPage(pagesize, pageindex, "CreateTime", this)'>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "CreateTime", this)'>
             CreateTime
         </th>
-        <th onclick='tasksPage(pagesize, pageindex, "StartTime", this)'>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "StartTime", this)'>
             ExcuteTime
         </th>
-        <th onclick='tasksPage(pagesize, pageindex, "EndTime", this)'>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "EndTime", this)'>
             EndTime
         </th>
     </tr>
@@ -51,6 +61,7 @@
     </ul>
 </nav>
 <input type="hidden" value='@Html.Raw(ViewBag.TaskInfosLists)' name="taskInfoLists" />
+<input type="hidden" value="@Html.Raw(ViewBag.PageSize)"name="pagesize" />
 <script type="text/javascript">
 
     function formatDatetime(datestring) {
@@ -92,7 +103,7 @@
 
     function goPage() {
         pageindex = document.getElementsByName("pageindex")[0].value;
-        tasksPage(pagesize, pageindex);
+        tasksPage(pagesize, pageindex, currenttasks);
     }
 
     function prev() {
@@ -100,25 +111,49 @@
             pageindex--;
         }
 
-        tasksPage(pagesize, pageindex);
+        tasksPage(pagesize, pageindex, currenttasks);
         document.getElementsByName("pageindex")[0].value = pageindex;
     }
 
 
     function next() {
         pageindex++;
-        tasksPage(pagesize, pageindex);
+        tasksPage(pagesize, pageindex, currenttasks);
         document.getElementsByName("pageindex")[0].value = pageindex;
     }
 
+    function searchTasks(textcontent)
+    {
+        if (textcontent == ""||textcontent==undefined)
+        {
+            return;
+        }
+
+        var temptasks = new Array();
+        var i = 0;
+        $.each(tasks, function (k, v) {
+            if (
+                v.ID.indexOf(textcontent)!=-1
+                ||v.Name.indexOf(textcontent)!=-1
+                ||v.Context.ControllerName.indexOf(textcontent) != -1
+                || v.Context.ActionName.indexOf(textcontent) != -1)
+            {
+                temptasks[i++]=v;
+            }
+        });
+        currenttasks = temptasks;
+        tasksPage(pagesize, pageindex, currenttasks);
+
+    }
 
 
     var tasks = JSON.parse(document.getElementsByName("taskInfoLists")[0].value);
+    var currenttasks = tasks;
     var pageindex = 1;
-    var pagesize = 2;
+    var pagesize = parseInt( document.getElementsByName("pagesize")[0].value);
 
 
-    function tasksPage(pagesize, pageindex, sortName, object) {
+    function tasksPage(pagesize, pageindex, tasks,sortName, object) {
         if (object != undefined) {
             if (object.sortDirection == undefined) {
                 object.sortDirection = "asc";
@@ -157,7 +192,7 @@
 
 
     }
-    tasksPage(pagesize, pageindex);
+    tasksPage(pagesize, pageindex, currenttasks);
 </script>
 
 

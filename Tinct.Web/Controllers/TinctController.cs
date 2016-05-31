@@ -149,8 +149,9 @@ namespace Tinct.Web.Controllers
             Newtonsoft.Json.JsonSerializer js = new Newtonsoft.Json.JsonSerializer();
             StringWriter sw = new StringWriter();
             js.Serialize(sw, taskInfosLists);
-            ViewBag.TaskInfosLists =sw.GetStringBuilder().ToString();
 
+            ViewBag.TaskInfosLists =sw.GetStringBuilder().ToString();
+            ViewBag.PageSize = 3;
             return View();
 
         }
@@ -227,8 +228,12 @@ namespace Tinct.Web.Controllers
                     logs = new List<LogEntity>();
                 }
             }
-            ViewBag.Logs = logs;
 
+            Newtonsoft.Json.JsonSerializer js = new Newtonsoft.Json.JsonSerializer();
+            StringWriter sw = new StringWriter();
+            js.Serialize(sw, logs);
+            ViewBag.Logs = sw.GetStringBuilder().ToString();
+            ViewBag.PageSize = 10;
             return View("Logs");
 
         }
