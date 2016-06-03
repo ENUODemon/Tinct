@@ -151,7 +151,7 @@ namespace Tinct.Web.Controllers
             js.Serialize(sw, taskInfosLists);
 
             ViewBag.TaskInfosLists =sw.GetStringBuilder().ToString();
-            ViewBag.PageSize = 3;
+            ViewBag.PageSize = 10;
             return View();
 
         }
