@@ -5,15 +5,47 @@
 
 <h2>Tasks</h2>
 
-<div class="form-inline" >
+
+<div class="form-inline">
+
+
     <div style="float:right" class="form-group">
-        <input type="button" class="btn btn-default" value="Search"   onclick="searchTasks(document.getElementsByName('searchContent')[0].value)" />
+        <input type="button" class="btn btn-default" value="Search" onclick="searchTasks(document.getElementsByName('searchContent')[0].value)" />
     </div>
     <div style="float:right" class="form-group">
-        <input type="text" class="form-control" name="searchContent"/>
+        <input type="text" class="form-control" name="searchContent" />
+
+
+
     </div>
-    
-   
+
+    <div style="float:right" class="form-group">
+        <select class="selectpicker" name="sleTaskStatus" style="height:31px">
+            <option value="0">ALL</option>
+            <option value="1">WaittingToRun</option>
+            <option value="2">Running</option>
+            <option value="3">Completed</option>
+        </select>
+    </div>
+
+    <div style="float:right" class="form-group">
+        <label for="inputTaskStatus" class="control-label" style="margin-top:5px;font-size:15px">TaskStatus</label>
+
+    </div>
+
+
+
+
+    <div style="float:right" class="form-group">
+        <input type="submit" class="btn btn-default" value="Refresh" />
+    </div>
+
+
+
+
+
+
+
 </div>
 <table class="table table-striped" name="tasksTable">
     <tr>
@@ -26,7 +58,7 @@
         <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ControllerName", this)'>
             Controller
         </th>
-        <th  onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ActionName", this)' >
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ActionName", this)'>
             Action
         </th>
         <th>
@@ -61,7 +93,7 @@
     </ul>
 </nav>
 <input type="hidden" value='@Html.Raw(ViewBag.TaskInfosLists)' name="taskInfoLists" />
-<input type="hidden" value="@Html.Raw(ViewBag.PageSize)"name="pagesize" />
+<input type="hidden" value="@Html.Raw(ViewBag.PageSize)" name="pagesize" />
 <script type="text/javascript">
 
     function formatDatetime(datestring) {
@@ -73,14 +105,12 @@
     var by = function (name, sortDirection) {
         return function (a, b) {
             if (sortDirection == "asc") {
-               
-                if (name.indexOf('.') > 0)
-                {
+
+                if (name.indexOf('.') > 0) {
                     name = name.split('.');
-                    return  a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
-                } 
-                if (name.length > 1 && typeof name != 'string')
-                {
+                    return a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
+                }
+                if (name.length > 1 && typeof name != 'string') {
                     return a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
                 }
                 return a[name].localeCompare(b[name]);
@@ -91,7 +121,7 @@
                     name = name.split('.');
                     return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
                 }
-                if (name.length > 1&&typeof name!='string') {
+                if (name.length > 1 && typeof name != 'string') {
                     return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
                 }
                 return b[name].localeCompare(a[name]);
@@ -122,23 +152,55 @@
         document.getElementsByName("pageindex")[0].value = pageindex;
     }
 
-    function searchTasks(textcontent)
-    {
-        if (textcontent == ""||textcontent==undefined)
-        {
+    function searchTasks(textcontent) {
+        if (textcontent == "" || textcontent == undefined) {
             return;
         }
+        var filtervalue = $(document.getElementsByName("sleTaskStatus")[0]).val();
+        var filetertasks = new Array();
+        var i = 0;
+        switch (filtervalue) {
+            case "0": filetertasks = tasks; break;
+            case "1": $.each(tasks, function (k, v) {
+                if (
+                    v.Status.toLowerCase().indexOf('waittingtorun') != -1
+                   ) {
+                    filetertasks[i++] = v;
+                }
+            }); break;
+            case "2":
+                $.each(tasks, function (k, v) {
+                    if (
+                        v.Status.toLowerCase().indexOf('running') != -1
+                       ) {
+                        filetertasks[i++] = v;
+                    }
+                });
+                break;
+            case "3":
+                $.each(tasks, function (k, v) {
+                    if (
+                        v.Status.toLowerCase().indexOf('completed') != -1
+                       ) {
+                        filetertasks[i++] = v;
+                    }
+                });
+                break;
+        }
+
+
+        var j = 0;
+
 
         var temptasks = new Array();
-        var i = 0;
-        $.each(tasks, function (k, v) {
+
+        $.each(filetertasks, function (k, v) {
             if (
-                v.ID.indexOf(textcontent)!=-1
-                ||v.Name.indexOf(textcontent)!=-1
-                ||v.Context.ControllerName.indexOf(textcontent) != -1
-                || v.Context.ActionName.indexOf(textcontent) != -1)
-            {
-                temptasks[i++]=v;
+                v.ID.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.Name.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.Context.ControllerName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.Context.ActionName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1) {
+                temptasks[j++] = v;
             }
         });
         currenttasks = temptasks;
@@ -150,10 +212,10 @@
     var tasks = JSON.parse(document.getElementsByName("taskInfoLists")[0].value);
     var currenttasks = tasks;
     var pageindex = 1;
-    var pagesize = parseInt( document.getElementsByName("pagesize")[0].value);
+    var pagesize = parseInt(document.getElementsByName("pagesize")[0].value);
 
 
-    function tasksPage(pagesize, pageindex, tasks,sortName, object) {
+    function tasksPage(pagesize, pageindex, tasks, sortName, object) {
         if (object != undefined) {
             if (object.sortDirection == undefined) {
                 object.sortDirection = "asc";
