@@ -245,6 +245,7 @@
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Log\log4net.config" />
     <None Include="bin\Tinct.Web.dll.config" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -264,6 +265,7 @@
       <SubType>Code</SubType>
     </Content>
     <None Include="Views\Tinct\Tasks.cshtml" />
+    <Content Include="Views\TinctTask\Tasks.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
