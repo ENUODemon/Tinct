@@ -116,15 +116,15 @@ namespace Tinct.TinctTaskMangement.TinctWork
 
         public void Start()
         {
-            runNetTask=  new Task(() =>
+            runNetTask = new Task(() =>
             {
                 List<NodeInfo> nodes = null;
                 if (string.IsNullOrEmpty(Context.NodeName))
                 {
 
-                    while (Context.NodeName == null)
+                    while (string.IsNullOrEmpty(Context.NodeName))
                     {
-                        if (cancets.IsCancellationRequested) 
+                        if (cancets.IsCancellationRequested)
                         {
                             break;
                         }
@@ -195,7 +195,7 @@ namespace Tinct.TinctTaskMangement.TinctWork
                 }).Start();
             }
             Status = TinctTaskStatus.Canceled;
-            
+
         }
 
         public void Wait()
@@ -263,11 +263,14 @@ namespace Tinct.TinctTaskMangement.TinctWork
                             TinctTaskCompleted(this, new TinctTaskEventArgs() { Context = this.Context });
                         }
                         break;
-                    case TinctTaskStatus.Waitting: State = new TinctTaskWaitingState();
+                    case TinctTaskStatus.Waitting:
+                        State = new TinctTaskWaitingState();
                         State.HandleState(this); break;
-                    case TinctTaskStatus.WaittingToRun: State = new TinctTaskWaitingToRunState();
+                    case TinctTaskStatus.WaittingToRun:
+                        State = new TinctTaskWaitingToRunState();
                         State.HandleState(this); break;
-                    case TinctTaskStatus.Faulted: State = new TinctTaskFaultedState();
+                    case TinctTaskStatus.Faulted:
+                        State = new TinctTaskFaultedState();
                         State.HandleState(this); break;
                     case TinctTaskStatus.Canceled:
 

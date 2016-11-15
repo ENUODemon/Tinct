@@ -56,7 +56,13 @@ namespace Tinct.Net.Communication.Node
         {
             lock (syncNodeInfoObject)
             {
-                var result = nodeInfoList.Remove(nodeInfo);
+                var finditem= nodeInfoList.Find(item => item.NodeName == nodeInfo.NodeName);
+                if (finditem == null)
+                {
+                    return true;
+                }
+                var reNode = finditem;
+                var result = nodeInfoList.Remove(reNode);
                 if (nodeInfoList.Count == 0)
                 {
                     nodeSignal.Reset();
@@ -133,6 +139,7 @@ namespace Tinct.Net.Communication.Node
         {
             lock (syncNodeInfoObject)
             {
+                List<NodeInfo> reNodes = new List<NodeInfo>();
                 for (int i = 0; i < nodeInfoList.Count(); i++)
                 {
                     if (DateTime.Now-NodeInfoList[i].LastUpdateTime>TimeSpan.FromSeconds(30))
@@ -141,16 +148,19 @@ namespace Tinct.Net.Communication.Node
 
                         foreach (var handler in UnConnectHandlers)
                         {
-                            handler.HandleUnConnectNode(item);
+                            new Task(() => { handler.HandleUnConnectNode(item); }).Start();  
                         }
-                    
-                        nodeInfoList.Remove(item);
-                        i--;
-                      
+
+                        reNodes.Add(item);        
                     }
 
                 }
-            
+                foreach (var reNode in nodeInfoList)
+                {
+                    reNodes.Remove(reNode);
+                }
+
+
             }
         }
     }

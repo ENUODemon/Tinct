@@ -51,7 +51,6 @@ namespace Tinct.TinctTaskMangement.TinctWork
         public void Stop()
         {
             TaskRepository.ClearAllTinctTasks();
-            throw new NotImplementedException();
         }
 
     }

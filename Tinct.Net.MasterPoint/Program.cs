@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tinct.Net.Communication.Connect;
 using Tinct.Net.Message;
 using Tinct.Net.Message.Task;
 using Tinct.TinctTaskMangement;
@@ -24,6 +25,11 @@ namespace Tinct.Net.MasterPointConsole
 
             //CrawlDataTasks t = new CrawlDataTasks();
             //t.GennerateTinctTaskManeger();
+
+
+            TinctConnect c = new TinctConnect();
+            c.ListenningPort(8885);
+            c.TaskMessage += C_TaskMessage;
 
             TinctTask t1 = new TinctTask();
             t1.Priority = TaskPriority.Low;
@@ -141,6 +147,15 @@ namespace Tinct.Net.MasterPointConsole
             Console.Read();
 
 
+        }
+
+        private static void C_TaskMessage(object sender, ReceiveMessageArgs e)
+        {
+            var remoteTaskinfo = TinctTaskInfo.GetObjectBySerializeString(e.ReceivedMessage);
+            if (remoteTaskinfo != null)
+            {
+
+            }
         }
 
         private static void t_TinctTaskCompleted(object sender, TinctTaskEventArgs e)

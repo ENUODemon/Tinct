@@ -12,6 +12,7 @@ namespace Tinct.PlatformController
 
         public ActionResult LoadData1(string taskDatas)
         {
+           // throw new Exception();
             UrlActionResult result = new UrlActionResult();
        
             System.Threading.Thread.Sleep(5000);
