@@ -41,6 +41,7 @@ namespace Tinct.Net.MessageDispath.Controller
 
             var dispathTaskInfo = context.RequestContext.RouteData.TinctTaskInfo;
             dispathTaskInfo.EndTime = DateTime.Now;
+            dispathTaskInfo.Context.TaskResult = TaskResult;
             if (ExceptionStringLists.Count > 0)
             {
                 dispathTaskInfo.Status = TinctTaskStatus.Exception;
@@ -61,7 +62,7 @@ namespace Tinct.Net.MessageDispath.Controller
                     dispathTaskInfo.Status = TinctTaskStatus.PartCompleted;
                 }
             }
-            dispathTaskInfo.Context.TaskData = TaskResult;
+          
 
         }
     }
