@@ -24,6 +24,6 @@ namespace Tinct.Net.Message.Task
 
         }
 
-
+        public string TaskResult { get; set; }
     }
 }

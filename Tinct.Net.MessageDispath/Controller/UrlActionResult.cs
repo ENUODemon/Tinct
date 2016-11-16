@@ -17,6 +17,12 @@ namespace Tinct.Net.MessageDispath.Controller
 
         public string RemainTaskData { get; set; }
 
+
+        /// <summary>
+        /// action return result
+        /// </summary>
+        public string TaskResult { get; set; }
+
         public List<string> ExceptionStringLists
         {
             get
@@ -55,6 +61,7 @@ namespace Tinct.Net.MessageDispath.Controller
                     dispathTaskInfo.Status = TinctTaskStatus.PartCompleted;
                 }
             }
+            dispathTaskInfo.Context.TaskData = TaskResult;
 
         }
     }

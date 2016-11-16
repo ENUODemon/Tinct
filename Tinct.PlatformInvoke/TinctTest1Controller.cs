@@ -16,6 +16,7 @@ namespace Tinct.PlatformController
             System.Threading.Thread.Sleep(15000);
             result.RemainTaskData = "";
             Console.WriteLine("test tinct  15000");
+            result.TaskResult = "complete!";
             return result;
         }
 
