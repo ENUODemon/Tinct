@@ -60,7 +60,11 @@ namespace Tinct.Net.Communication.Connect
                     {
                         messagebytes.Clear();
                         Console.WriteLine("Waiting for a connection... ");
-                        using (TcpClient client = server.AcceptTcpClient())
+                        TcpClient client = server.AcceptTcpClient();
+
+
+
+                        new Task(() =>
                         {
                             Console.WriteLine("Connected!");
                             data = null;
@@ -87,7 +91,10 @@ namespace Tinct.Net.Communication.Connect
 
                                 }).Start();
                             }
-                        }
+                            client.Close();
+                        }).Start();
+
+
                     }
                 }
                 catch (SocketException e)

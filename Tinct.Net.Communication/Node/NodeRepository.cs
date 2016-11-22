@@ -142,7 +142,7 @@ namespace Tinct.Net.Communication.Node
                 List<NodeInfo> reNodes = new List<NodeInfo>();
                 for (int i = 0; i < nodeInfoList.Count(); i++)
                 {
-                    if (DateTime.Now-NodeInfoList[i].LastUpdateTime>TimeSpan.FromSeconds(30))
+                    if (DateTime.Now-NodeInfoList[i].LastUpdateTime>TimeSpan.FromSeconds(120))
                     {
                         var item = nodeInfoList[i];
 
