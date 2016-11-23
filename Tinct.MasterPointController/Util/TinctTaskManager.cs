@@ -38,7 +38,7 @@ namespace Tinct.TinctTaskMangement.TinctWork
 
            // System.Threading.Thread.Sleep(20000);
            // service.RegisterRestoreMasterNode(7);
-           service.RegisterCheckUnConnectNode();
+           //service.RegisterCheckUnConnectNode();
 
             while (true)
             {
