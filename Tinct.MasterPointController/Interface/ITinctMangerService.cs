@@ -8,10 +8,6 @@ namespace Tinct.TinctTaskMangement.Interface
 {
     public  interface ITinctMangerService
     {
-        /// <summary>
-        /// Register check UnConect node sercice
-        /// </summary>
-        void RegisterCheckUnConnectNode();
        /// <summary>
         /// Register Restore MasterNode when the MasterNode is down
        /// </summary>

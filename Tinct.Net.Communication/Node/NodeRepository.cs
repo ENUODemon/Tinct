@@ -7,16 +7,15 @@ using System.Threading.Tasks;
 using Tinct.Net.Communication.Interface;
 using Tinct.Net.Message.Node;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace Tinct.Net.Communication.Node
 {
     public class NodeRepository : INodeRepository
     {
-        private List<NodeInfo> nodeInfoList = new List<NodeInfo>();
 
-        private List<NodeInfo> oriNodeInfolist = new List<NodeInfo>();
+        private ConcurrentDictionary<string, NodeInfo> dictNodeInfos = new ConcurrentDictionary<string, NodeInfo>();
 
-        private object syncNodeInfoObject = new object();
         private ManualResetEvent nodeSignal = new ManualResetEvent(false);
 
 
@@ -24,7 +23,7 @@ namespace Tinct.Net.Communication.Node
         {
             get
             {
-                return nodeInfoList;
+                return dictNodeInfos.Values.ToList();
             }
             private set { }
         }
@@ -45,51 +44,38 @@ namespace Tinct.Net.Communication.Node
 
         public void AddNode(NodeInfo nodeInfo)
         {
-            lock (syncNodeInfoObject)
-            {
-                nodeInfoList.Add(nodeInfo);
-                nodeSignal.Set();
-            }
+
+            dictNodeInfos.TryAdd(nodeInfo.NodeName, nodeInfo);
         }
 
         public bool RemoveNode(NodeInfo nodeInfo)
         {
-            lock (syncNodeInfoObject)
+            NodeInfo outnodeInfo = null;
+            dictNodeInfos.TryRemove(nodeInfo.NodeName, out outnodeInfo);
+            if (dictNodeInfos.Keys.Count == 0)
             {
-                var finditem= nodeInfoList.Find(item => item.NodeName == nodeInfo.NodeName);
-                if (finditem == null)
-                {
-                    return true;
-                }
-                var reNode = finditem;
-                var result = nodeInfoList.Remove(reNode);
-                if (nodeInfoList.Count == 0)
-                {
-                    nodeSignal.Reset();
-                }
-                return result;
+                nodeSignal.Reset();
             }
+
+            if (outnodeInfo == null)
+            {
+                return false;
+            }
+            return true;
         }
 
 
         public bool UpdateNodeInfo(NodeInfo nodeInfo)
         {
-            lock (syncNodeInfoObject)
+            var result = dictNodeInfos.TryAdd(nodeInfo.NodeName, nodeInfo);
+            if (result)
             {
-                var updateNode = nodeInfoList.Find(item => item.NodeName == nodeInfo.NodeName);
-                if (updateNode == null)
-                {
-                    nodeInfoList.Add(nodeInfo);
-                    nodeSignal.Set();
-                  
-                }
-                else
-                {
-                    updateNode.LastUpdateTime = nodeInfo.LastUpdateTime;
-                    updateNode.Status = nodeInfo.Status;
-                }
-
-
+                nodeSignal.Set();
+            }
+            else
+            {
+                dictNodeInfos[nodeInfo.NodeName].LastUpdateTime = nodeInfo.LastUpdateTime;
+                dictNodeInfos[nodeInfo.NodeName].Status = nodeInfo.Status;
             }
             return true;
 
@@ -116,52 +102,24 @@ namespace Tinct.Net.Communication.Node
 
 
             nodeSignal.WaitOne();
-            lock (syncNodeInfoObject)
-            {
-                foreach (var m in nodeInfoList)
-                {
-                    if (m.Status == NodeStatus.Running)
-                    {
-                        avalibleNodes.Add(m);
-                    }
 
+            foreach (var m in dictNodeInfos)
+            {
+                if (m.Value.Status == NodeStatus.Running)
+                {
+                    avalibleNodes.Add(m.Value);
                 }
+
             }
             return avalibleNodes;
         }
 
         public NodeInfo GetNodeByName(string nodeName)
         {
-            return nodeInfoList.FirstOrDefault(t => t.NodeName == nodeName);
+            NodeInfo result = null;
+            dictNodeInfos.TryGetValue(nodeName, out result);
+            return result;
         }
 
-        public void SyncNodeInfo(List<IUnConnectNodeHandler> UnConnectHandlers) 
-        {
-            lock (syncNodeInfoObject)
-            {
-                List<NodeInfo> reNodes = new List<NodeInfo>();
-                for (int i = 0; i < nodeInfoList.Count(); i++)
-                {
-                    if (DateTime.Now-NodeInfoList[i].LastUpdateTime>TimeSpan.FromSeconds(120))
-                    {
-                        var item = nodeInfoList[i];
-
-                        foreach (var handler in UnConnectHandlers)
-                        {
-                            new Task(() => { handler.HandleUnConnectNode(item); }).Start();  
-                        }
-
-                        reNodes.Add(item);        
-                    }
-
-                }
-                foreach (var reNode in nodeInfoList)
-                {
-                    reNodes.Remove(reNode);
-                }
-
-
-            }
-        }
     }
 }

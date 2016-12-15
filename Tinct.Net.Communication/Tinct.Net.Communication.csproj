@@ -58,7 +58,6 @@
     <Compile Include="Interface\ISlaveConnect.cs" />
     <Compile Include="Interface\ITinctConnect.cs" />
     <Compile Include="Master\MDeployMessageHandler.cs" />
-    <Compile Include="Master\MUnConnectHandler.cs" />
     <Compile Include="Master\MMessageHander.cs" />
     <Compile Include="Master\TinctMasterNode.cs">
       <SubType>Code</SubType>

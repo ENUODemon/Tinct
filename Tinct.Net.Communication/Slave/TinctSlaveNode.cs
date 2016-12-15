@@ -112,7 +112,7 @@ namespace Tinct.Net.Communication.Slave
 
 
 
-            tinctCon.TaskMessage += new EventHandler<ReceiveMessageArgs>(ReciveConMessage);
+            tinctCon.MessageHandlers += new EventHandler<ReceiveMessageArgs>(ReciveConMessage);
             IMessageHandler deployHandler = new DeployMessageHandler();
             IMessageHandler messageHandler = new SMessageHandler();
             MessageHandlers.Add(deployHandler);

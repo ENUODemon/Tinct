@@ -9,6 +9,8 @@ namespace Tinct.Net.Message.Task
     [Serializable]
     public class TinctTaskContext : MarshalByRefObject
     {
+   
+        ///want to remove it
         public string NodeName { get; set; }
 
         public string ControllerName { get; set; }

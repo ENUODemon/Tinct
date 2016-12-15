@@ -1,26 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Tinct.Net.Communication.Interface;
+using System.Collections.Concurrent;
+using System.Configuration;
 
 namespace Tinct.Net.Communication.Connect
 {
     public class TinctConnect : ITinctConnect
     {
+        #region Filed
         private TcpListener server = null;
-        private void RaiseTaskMessage(ReceiveMessageArgs e)
+
+        private ConcurrentDictionary<string, TcpClient> dicTcpSendClients = new ConcurrentDictionary<string, TcpClient>();
+        private ConcurrentDictionary<string, TcpClient> dicTcpAcceptClients = new ConcurrentDictionary<string, TcpClient>();
+        #endregion
+
+
+        #region Event
+        public event EventHandler<ReceiveMessageArgs> MachineCloseConnectHandlers;
+
+        public event EventHandler<ReceiveMessageArgs> MessageHandlers;
+
+        private void RaiseHanlerMessage(ReceiveMessageArgs e)
         {
-            if (TaskMessage != null)
+            if (MessageHandlers != null)
             {
-                TaskMessage(this, e);
+                MessageHandlers(this, e);
             }
         }
 
-        public event EventHandler<ReceiveMessageArgs> TaskMessage;
+        private void RaiseMachineCloseConnecHanlerMessage(ReceiveMessageArgs e)
+        {
+            if (MachineCloseConnectHandlers != null)
+            {
+                MachineCloseConnectHandlers(this, e);
+            }
+        }
+
+
+        #endregion
+
+
+
+
 
         public bool ListenningPort(int port)
         {
@@ -45,73 +73,9 @@ namespace Tinct.Net.Communication.Connect
                 return false;
             }
             Console.WriteLine("IPAddress is {0}", myIPAddress.ToString());
+            var task = StartListenningTaskAsync(myIPAddress, port);
 
-
-            var startServerTask = new Task(() =>
-            {
-                try
-                {
-                    server = new TcpListener(myIPAddress, port);
-                    server.Start();
-                    List<byte> messagebytes = new List<byte>();
-
-                    String data = null;
-                    while (true)
-                    {
-                        messagebytes.Clear();
-                        Console.WriteLine("Waiting for a connection... ");
-                        TcpClient client = server.AcceptTcpClient();
-
-
-
-                        new Task(() =>
-                        {
-                            Console.WriteLine("Connected!");
-                            data = null;
-                            Byte[] bytes = new Byte[256];
-
-                            using (NetworkStream stream = client.GetStream())
-                            {
-                                StringBuilder messagebuilder = new StringBuilder();
-                                int i;
-                                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-                                {
-                                    data = System.Text.Encoding.Unicode.GetString(bytes, 0, i);
-                                    messagebuilder.Append(data);
-                                    bytes = new Byte[256];
-                                }
-                                new Task(() =>
-                                {
-                                    string message = messagebuilder.ToString();
-
-                                    ReceiveMessageArgs args = new ReceiveMessageArgs();
-                                    args.ReceivedMessage = message;
-
-                                    RaiseTaskMessage(args);
-
-                                }).Start();
-                            }
-                            client.Close();
-                        }).Start();
-
-
-                    }
-                }
-                catch (SocketException e)
-                {
-                    Console.WriteLine(e.Message);
-                    //log
-                    throw;
-                }
-                finally
-                {
-                    server.Stop();
-                }
-            });
-
-            startServerTask.Start();
-            return !startServerTask.IsFaulted;
-
+            return !task.IsFaulted;
         }
 
         public bool StopListenning()
@@ -123,39 +87,129 @@ namespace Tinct.Net.Communication.Connect
             return true;
         }
 
+        public void StopAllTCPClinets()
+        {
+            foreach (var item in dicTcpSendClients)
+            {
+                item.Value.Close();
+            }
+            foreach (var item in dicTcpAcceptClients)
+            {
+                item.Value.Close();
+            }
 
+        }
 
         public bool SendMessage(string machineName, int port, string message)
         {
-
+            TcpClient tcpClient = null;
+            var keyString = machineName + ":" + port;
+            dicTcpSendClients.TryGetValue(keyString, out tcpClient);
             try
             {
-
-                using (TcpClient client = new TcpClient(machineName, port))
+                if (tcpClient == null)
                 {
-                    Byte[] data = System.Text.Encoding.Unicode.GetBytes(message);
-                    using (NetworkStream stream = client.GetStream())
-                    {
-                        stream.Write(data, 0, data.Length);
-                    }
-
+                    tcpClient = new TcpClient(machineName, port);
+                    dicTcpSendClients.TryAdd(keyString, tcpClient);
                 }
+
+                Byte[] data = System.Text.Encoding.Unicode.GetBytes(message);
+
+                NetworkStream stream = tcpClient.GetStream();
+
+                stream.Write(data, 0, data.Length);
+
+
             }
-            catch (ArgumentNullException e)
+            catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                return false;
-            }
-            catch (SocketException e)
-            {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e);
                 return false;
             }
             return true;
 
         }
 
+        private async Task StartListenningTaskAsync(IPAddress address, int port)
+        {
+            new Task(() =>
+            {
+                try
+                {
+                    server = new TcpListener(address, port);
+                    server.Start();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    server.Stop();
+                }
+                while (true)
+                {
+                    Console.WriteLine("Waiting for a connection... ");
+                    TcpClient client = server.AcceptTcpClient();
 
 
+                    new Task(() =>
+                    {
+                        Console.WriteLine("Connected!");
+
+                        NetworkStream stream = client.GetStream();
+                        while (true)
+                        {
+                            Byte[] bytes = new Byte[8192 * 10];
+                            int readStep = 0;
+                            try
+                            {
+                                ///if length>81920 have some problem
+                                readStep = stream.Read(bytes, 0, bytes.Length);
+                            }
+                            catch (IOException e)
+                            {
+
+                                ////want to improve
+                                Console.WriteLine(e.Message);
+                                var str = client.Client.RemoteEndPoint.ToString();
+                                var remoteIpaddress = str.Substring(0, str.IndexOf(':'));
+                                var hostName = Dns.GetHostEntry(remoteIpaddress).HostName;
+                                var remoteName = hostName.Substring(0, hostName.IndexOf('.'));
+                                Console.WriteLine(remoteName);
+                                stream.Close();
+                                client.Close();
+
+                                TcpClient clienttcp = null;
+
+                                var m1 = dicTcpSendClients.Where(m => m.Key.Contains(remoteName)).First();
+                                // m1.Value.GetStream().Close();
+                                m1.Value.Close();
+                                dicTcpSendClients.TryRemove(m1.Key, out clienttcp);
+
+                                new Task(() =>
+                                {
+                                    string message = remoteName;
+                                    ReceiveMessageArgs args = new ReceiveMessageArgs();
+                                    args.ReceivedMessage = message;
+                                    RaiseMachineCloseConnecHanlerMessage(args);
+                                }).Start();
+
+
+                                return;
+                            }
+
+                            var data = System.Text.Encoding.Unicode.GetString(bytes, 0, readStep);
+                            new Task(() =>
+                            {
+                                string message = data;
+                                ReceiveMessageArgs args = new ReceiveMessageArgs();
+                                args.ReceivedMessage = message;
+                                RaiseHanlerMessage(args);
+
+                            }).Start();
+                        };
+                    }).Start();
+                }
+            }).Start();
+        }
     }
+
 }

@@ -121,7 +121,6 @@ namespace Tinct.TinctTaskMangement.TinctWork
                 List<NodeInfo> nodes = null;
                 if (string.IsNullOrEmpty(Context.NodeName))
                 {
-
                     while (string.IsNullOrEmpty(Context.NodeName))
                     {
                         if (cancets.IsCancellationRequested)

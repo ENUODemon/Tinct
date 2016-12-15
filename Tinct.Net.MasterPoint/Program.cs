@@ -27,9 +27,9 @@ namespace Tinct.Net.MasterPointConsole
             //t.GennerateTinctTaskManeger();
 
 
-            TinctConnect c = new TinctConnect();
-            c.ListenningPort(8885);
-            c.TaskMessage += C_TaskMessage;
+            //TinctConnect c = new TinctConnect();
+            //c.ListenningPort(8885);
+            //c.TaskMessage += C_TaskMessage;
 
             TinctTask t1 = new TinctTask();
             t1.Priority = TaskPriority.Low;
@@ -39,7 +39,7 @@ namespace Tinct.Net.MasterPointConsole
             t1.Context.ActionName = "LoadData1";
             t1.Status = TinctTaskStatus.WaittingToRun;
 
-           // t1.TinctTaskCompleted += t_TinctTaskCompleted;
+            t1.TinctTaskCompleted += t_TinctTaskCompleted;
 
             //TinctTask t2 = new TinctTask();
             //t2.Priority = TaskPriority.Low;

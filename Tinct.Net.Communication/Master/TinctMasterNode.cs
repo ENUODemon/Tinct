@@ -75,33 +75,37 @@ namespace Tinct.Net.Communication.Master
         }
 
 
-        public void StartCheckNodeService()
-        {
-            blueTimer = new System.Threading.Timer(
-            (con) =>
-            {
-
-                NodeRepository.Current.SyncNodeInfo(UnConnectHandlers);
-                  // want to Configurable 
-            }, null, 100, 30000);
-            
-        }
-
 
         public override bool StartMaster()
         {
-            tinctCon.TaskMessage += ReciveConMessage;
+            tinctCon.MessageHandlers += ReciveConMessage;
             IMessageHandler dhandler = new MDeployMessageHandler();
             MessageHandlers.Add(dhandler);
             IMessageHandler handler = new MMessageHander();
             MessageHandlers.Add(handler);
 
-
-            IUnConnectNodeHandler connectHandler = new MUnConnectHandler();
-            UnConnectHandlers.Add(connectHandler);
+            tinctCon.MachineCloseConnectHandlers += TinctCon_MachineCloseConnectHandlers;
 
             return tinctCon.ListenningPort(masterPort);
 
+        }
+
+        private void TinctCon_MachineCloseConnectHandlers(object sender, ReceiveMessageArgs e)
+        {
+            foreach (var handler in UnConnectHandlers)
+            {
+                try
+                {
+                    if (!handler.HandleUnConnectNode(e.ReceivedMessage))
+                    {
+                        break;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
         }
 
         public override bool EndMaster()

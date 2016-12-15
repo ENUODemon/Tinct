@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.IO;
 using Tinct.Net.Message.Message;
+using Tinct.Net.Message.Extension;
 
 namespace Tinct.Net.Message.Task
 {
@@ -27,8 +28,11 @@ namespace Tinct.Net.Message.Task
         public string Name { get; set; }
         public bool IsCancel { get; protected set; }
 
+        [JsonConverter(typeof(IsoDateTimeConverterExtension), "yyyy'-'MM'-'dd' 'HH':'mm':'ss")]
         public DateTime CreateTime { get; protected set; }
+        [JsonConverter(typeof(IsoDateTimeConverterExtension), "yyyy'-'MM'-'dd' 'HH':'mm':'ss")]
         public DateTime StartTime { get; set; }
+        [JsonConverter(typeof(IsoDateTimeConverterExtension), "yyyy'-'MM'-'dd' 'HH':'mm':'ss")]
         public DateTime EndTime { get; set; }
         [JsonConverter(typeof(StringEnumConverter))]
         public TaskPriority Priority { get; set; }
@@ -40,7 +44,7 @@ namespace Tinct.Net.Message.Task
         [JsonConverter(typeof(StringEnumConverter))]
         public CommandType  Command{get;set;}
 
-       
+        [JsonIgnore]
         public List<Guid> WaitTaskIDs { get { return waitTaskIDs; } set { waitTaskIDs = value; } }
 
 

@@ -17,15 +17,6 @@ namespace Tinct.TinctTaskMangement.Util
     public class TinctMangerService : ITinctMangerService
     {
 
-        private ITintTaskState state;
-
-        public void RegisterCheckUnConnectNode()
-        {
-            TinctMasterNode.Current.UnConnectHandlers.Add(new UnConnectNodeTaskHandler());
-            TinctMasterNode.Current.StartCheckNodeService();
-   
-        }
-
         public void RegisterRestoreMasterNode(int step)
         {
             string sLoggerName = ConfigurationManager.AppSettings["MasterLoggerName"].ToString();

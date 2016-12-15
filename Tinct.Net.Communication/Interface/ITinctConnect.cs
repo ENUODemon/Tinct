@@ -12,8 +12,12 @@ namespace Tinct.Net.Communication.Interface
         /// <summary>
         /// when recvice message from node ,will raise the event.
         /// </summary>
-        event EventHandler<ReceiveMessageArgs> TaskMessage;
+        event EventHandler<ReceiveMessageArgs> MessageHandlers;
 
+        /// <summary>
+        /// when client close connection,will raise the event.
+        /// </summary>
+        event EventHandler<ReceiveMessageArgs> MachineCloseConnectHandlers;
         /// <summary>
         /// Listen port for connect 
         /// </summary>

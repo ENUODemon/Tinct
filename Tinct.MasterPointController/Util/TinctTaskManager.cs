@@ -32,13 +32,12 @@ namespace Tinct.TinctTaskMangement.TinctWork
         public void Start()
         {
 
-      
+
             TinctMasterNode.Current.StartMaster();
             TinctMasterNode.Current.MessageHandlers.Add(new MessageTaskHandler());
-
-           // System.Threading.Thread.Sleep(20000);
-           // service.RegisterRestoreMasterNode(7);
-           //service.RegisterCheckUnConnectNode();
+            TinctMasterNode.Current.UnConnectHandlers.Add(new UnConnectNodeTaskHandler());
+            // System.Threading.Thread.Sleep(20000);
+            // service.RegisterRestoreMasterNode(7);
 
             while (true)
             {

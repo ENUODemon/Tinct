@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension\IsoDateTimeConverterExtension.cs" />
     <Compile Include="Message\CommandType.cs">
       <SubType>Code</SubType>
     </Compile>

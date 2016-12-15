@@ -10,6 +10,6 @@ namespace Tinct.Net.Communication.Interface
     public  interface IUnConnectNodeHandler
     {
 
-         void HandleUnConnectNode(NodeInfo node);
+         bool HandleUnConnectNode(string nodeName);
     }
 }

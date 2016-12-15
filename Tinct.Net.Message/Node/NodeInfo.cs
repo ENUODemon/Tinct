@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Tinct.Net.Message.Task;
+using Tinct.Net.Message.Extension;
 
 namespace Tinct.Net.Message.Node
 {
@@ -15,6 +16,8 @@ namespace Tinct.Net.Message.Node
         private List<TinctTaskInfo> tinctTaskInfoList = new List<TinctTaskInfo>();
         public string NodeName { get; set; }
 
+
+        [JsonConverter(typeof(IsoDateTimeConverterExtension), "yyyy'-'MM'-'dd' 'HH':'mm':'ss")]
         public DateTime LastUpdateTime { get; set; }
 
 
