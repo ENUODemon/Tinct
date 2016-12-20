@@ -112,6 +112,10 @@ namespace Tinct.Net.Communication.Connect
                     tcpClient = new TcpClient(machineName, port);
                     dicTcpSendClients.TryAdd(keyString, tcpClient);
                 }
+                if (tcpClient.Connected == false)
+                {
+                    dicTcpSendClients.TryRemove(keyString, out tcpClient);
+                }
 
                 Byte[] data = System.Text.Encoding.Unicode.GetBytes(message);
 
@@ -178,9 +182,11 @@ namespace Tinct.Net.Communication.Connect
                                 client.Close();
 
                                 TcpClient clienttcp = null;
-
-                                var m1 = dicTcpSendClients.Where(m => m.Key.Contains(remoteName)).First();
-                                // m1.Value.GetStream().Close();
+                                if (dicTcpAcceptClients.Count > 0)
+                                {
+                                    var m1 = dicTcpSendClients.Where(m => m.Key.Contains(remoteName)).First();
+                                }
+                            
                                 m1.Value.Close();
                                 dicTcpSendClients.TryRemove(m1.Key, out clienttcp);
 
