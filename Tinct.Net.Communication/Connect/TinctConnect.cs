@@ -185,10 +185,11 @@ namespace Tinct.Net.Communication.Connect
                                 if (dicTcpAcceptClients.Count > 0)
                                 {
                                     var m1 = dicTcpSendClients.Where(m => m.Key.Contains(remoteName)).First();
+                                    m1.Value.Close();
+                                    dicTcpSendClients.TryRemove(m1.Key, out clienttcp);
                                 }
                             
-                                m1.Value.Close();
-                                dicTcpSendClients.TryRemove(m1.Key, out clienttcp);
+                                
 
                                 new Task(() =>
                                 {
