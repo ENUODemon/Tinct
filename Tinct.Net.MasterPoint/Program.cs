@@ -11,6 +11,7 @@ using Tinct.TinctTaskMangement;
 using Tinct.TinctTaskMangement.Interface;
 using Tinct.TinctTaskMangement.TinctWork;
 using Tinct.TinctTaskMangement.Util;
+using System.Threading;
 
 namespace Tinct.Net.MasterPointConsole
 {
@@ -40,6 +41,9 @@ namespace Tinct.Net.MasterPointConsole
             t1.Status = TinctTaskStatus.WaittingToRun;
 
             t1.TinctTaskCompleted += t_TinctTaskCompleted;
+
+            Thread.Sleep(10000);
+            t1.Cancel();
 
             //TinctTask t2 = new TinctTask();
             //t2.Priority = TaskPriority.Low;

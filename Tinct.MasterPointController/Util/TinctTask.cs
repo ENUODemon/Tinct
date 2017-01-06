@@ -193,6 +193,10 @@ namespace Tinct.TinctTaskMangement.TinctWork
                     TinctMasterNode.Current.SendMessageToSlave(message, this.Context.NodeName);
                 }).Start();
             }
+            else if (Status == TinctTaskStatus.Completed)
+            {
+                return;
+            }
             Status = TinctTaskStatus.Canceled;
 
         }
