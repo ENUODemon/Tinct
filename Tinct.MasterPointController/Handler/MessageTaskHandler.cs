@@ -21,16 +21,16 @@ namespace Tinct.TinctTaskMangement.Handler
             {
                 NodeInfo NodeInfo = NodeInfo.GetObjectBySerializeString(message);
 
-                if (NodeInfo.TinctTaskInfoList.Count == 0)
-                {
-                    var node = NodeRepository.Current.GetNodeByName(NodeInfo.NodeName);
-                    foreach (var task in node.TinctTaskInfoList)
-                    {
-                        task.Status = TinctTaskStatus.Faulted;
-                        TinctTaskRepository.Current.UpdateTinctTasksStatus(task);
-                    }
-                    node.TinctTaskInfoList = null;
-                }
+                //if (NodeInfo.TinctTaskInfoList.Count == 0)
+                //{
+                //    var node = NodeRepository.Current.GetNodeByName(NodeInfo.NodeName);
+                //    foreach (var task in node.TinctTaskInfoList)
+                //    {
+                //        task.Status = TinctTaskStatus.Faulted;
+                //        TinctTaskRepository.Current.UpdateTinctTasksStatus(task);
+                //    }
+                //    node.TinctTaskInfoList = null;
+                //}
 
                 foreach (var tinctTaskInfo in NodeInfo.TinctTaskInfoList)
                 {
