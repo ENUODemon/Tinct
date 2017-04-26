@@ -17,10 +17,22 @@ namespace Tinct.TinctTaskMangement.Handler
         public bool HanderMessage(string message)
         {
 
-            if (message.StartsWith("{\"NodeName\"")) 
+            if (message.StartsWith("{\"NodeName\""))
             {
                 NodeInfo NodeInfo = NodeInfo.GetObjectBySerializeString(message);
-                foreach (var tinctTaskInfo in NodeInfo.TinctTaskInfoList) 
+
+                if (NodeInfo.TinctTaskInfoList.Count == 0)
+                {
+                    var node = NodeRepository.Current.GetNodeByName(NodeInfo.NodeName);
+                    foreach (var task in node.TinctTaskInfoList)
+                    {
+                        task.Status = TinctTaskStatus.Faulted;
+                        TinctTaskRepository.Current.UpdateTinctTasksStatus(task);
+                    }
+                    node.TinctTaskInfoList = null;
+                }
+
+                foreach (var tinctTaskInfo in NodeInfo.TinctTaskInfoList)
                 {
                     TinctTaskRepository.Current.UpdateTinctTasksStatus(tinctTaskInfo);
                 }
