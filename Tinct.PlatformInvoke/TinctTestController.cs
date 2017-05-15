@@ -26,7 +26,7 @@ namespace Tinct.PlatformController
         {
             UrlActionResult result = new UrlActionResult();
 
-            System.Threading.Thread.Sleep(20000);
+            System.Threading.Thread.Sleep(10000);
 
             result.RemainTaskData = "";
             Console.WriteLine("test tinct  tinct 70000!");
