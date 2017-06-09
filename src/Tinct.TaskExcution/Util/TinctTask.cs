@@ -4,20 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Tinct.TinctTaskMangement.Interface;
+
 using Tinct.Net.Communication.Master;
 using Tinct.Net.Communication.Connect;
 using Tinct.Common.Log;
 using Tinct.Net.Communication.Node;
 using Newtonsoft.Json;
 using System.IO;
-using Tinct.TinctTaskMangement.Util;
 using Tinct.Net.Communication.Interface;
 using Tinct.Net.Message.Message;
 using Tinct.Common.Extension;
 using Newtonsoft.Json.Converters;
+using Tinct.TaskExcution.Interface;
 
-namespace Tinct.TinctTaskMangement.Util
+namespace Tinct.TaskExcution.Util
 {
     public class TinctTask : MarshalByRefObject, ITinctTask
     {

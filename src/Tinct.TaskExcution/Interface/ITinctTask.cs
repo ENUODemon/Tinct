@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tinct.TinctTaskMangement.Interface
+namespace Tinct.TaskExcution.Interface
 {
     public interface ITinctTask
     {

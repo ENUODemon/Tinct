@@ -212,8 +212,7 @@ namespace Tinct.Net.Communication.Connect
                         catch (IOException e)
                         {
                             Console.WriteLine(e.Message);
-                            stream.Close();
-                            acceptClient.Close();
+                           
 
                             var remoteName = GetRemoteName(acceptClient);
                             if (dicTcpAcceptClients.Count > 0)
@@ -223,6 +222,8 @@ namespace Tinct.Net.Communication.Connect
                                 dicTcpSendClients.TryRemove(m1.Key, out TcpClient clienttcp);
                                 clienttcp = null;
                             }
+                            stream.Close();
+                            acceptClient.Close();
                             return;
                         }
 

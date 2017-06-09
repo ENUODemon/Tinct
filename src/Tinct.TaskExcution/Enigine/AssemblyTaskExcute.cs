@@ -9,10 +9,10 @@ using Tinct.Common.Log;
 using Tinct.Net.Communication.Cfg;
 using Tinct.Net.Communication.Slave;
 using Tinct.Net.Message.Message;
-using Tinct.TinctTaskMangement.Interface;
-using Tinct.TinctTaskMangement.Util;
+using Tinct.TaskExcution.Interface;
+using Tinct.TaskExcution.Util;
 
-namespace Tinct.TinctTaskMangement.Enigine
+namespace Tinct.TaskExcution.Enigine
 {
     [Serializable]
     public class AssemblyTaskExcute : IExcuteTask
@@ -35,12 +35,8 @@ namespace Tinct.TinctTaskMangement.Enigine
             AssemblyExcuteEnvironment.Current.AppDomainDicts.TryGetValue(task.ClassName + "\\" + task.MethodName, out AppDomain runTimeActionDomain);
             if (runTimeActionDomain == null)
             {
-                AppDomainSetup setup = new AppDomainSetup();
-                setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
-                setup.CachePath = setup.ApplicationBase;
-                setup.ShadowCopyFiles = "true";
-                setup.ShadowCopyDirectories = setup.ApplicationBase;
-                runTimeActionDomain = AppDomain.CreateDomain(task.ClassName + "\\" + task.MethodName, null, setup);
+              
+                runTimeActionDomain = AppDomain.CreateDomain(task.ClassName + "\\" + task.MethodName, AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.SetupInformation);
                 AssemblyExcuteEnvironment.Current.AppDomainDicts.TryAdd(runTimeActionDomain.FriendlyName, runTimeActionDomain);
             }
             try

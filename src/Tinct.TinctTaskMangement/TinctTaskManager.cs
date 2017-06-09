@@ -14,7 +14,7 @@ using Tinct.Net.Communication.Node;
 using Tinct.TinctTaskMangement.Handler;
 using Tinct.Net.Message.Message;
 using Tinct.Common.Extension;
-using Tinct.TinctTaskMangement.Util;
+using Tinct.TaskExcution.Util;
 
 namespace Tinct.TinctTaskMangement
 {

@@ -8,7 +8,7 @@ using Tinct.Net.Communication.Cfg;
 using Tinct.Net.Communication.Interface;
 using Tinct.Net.Communication.Slave;
 using Tinct.Net.Message.Message;
-using Tinct.TinctTaskMangement.Util;
+using Tinct.TaskExcution.Util;
 
 namespace Tinct.TinctTaskMangement.Handler
 {
@@ -20,10 +20,11 @@ namespace Tinct.TinctTaskMangement.Handler
             switch (message.MessageHeader.CommandType)
             {
                 case CommandType.Return:
-                   // TinctSlaveNode.Current.AddNodeTaskInfo(routData.TinctTaskInfo);
                     new Task(() => { ReturnCommand(message.MessageBody); }).Start();
                     break;
-               
+                case CommandType.Deploy:
+                   // new Task(() => { DeployCommand(message.MessageBody); }).Start();
+                    break;
             }
 
             return true;
@@ -37,7 +38,11 @@ namespace Tinct.TinctTaskMangement.Handler
             TinctTaskRepository.Current.UpdateWaittingTask(task);
         }
 
-
+        private void DeployCommand(MessageBody messageBody)
+        {
+            
+          
+        }
 
       
     }

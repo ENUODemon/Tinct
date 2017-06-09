@@ -1,36 +1,29 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Tinct.Net.Communication.Slave;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using Tinct.Net.Communication.Master;
-using Tinct.Net.Message.Message;
-using Tinct.TinctTaskMangement.Handler;
-using Tinct.Common.Log;
 using System.Threading.Tasks;
-using Tinct.TinctTaskMangement;
 using Tinct.TaskExcution.Util;
+using Tinct.TinctTaskMangement;
 
-namespace Tinct.TInctTaskMangement.UnitTest.Util
+namespace TinctMater
 {
-    [TestClass]
-    public class TinctTaskMangerTest
+    class Program
     {
-        [TestMethod]
-        public void StartTest()
+        static void Main(string[] args)
         {
-
-
             TinctTaskRepository q = new TinctTaskRepository();
             var mloggname = "Masterlogger";
             var mfilename = "Log4net.config";
             var slogname = "Slavelogger";
-            TinctTaskService.StartMasterService();       
-         
-            Thread.Sleep(2000);
-            TinctTaskService.StartSlaveService(slogname, mfilename);
+            TinctTaskService.StartMasterService();
+
+            //Thread.Sleep(2000);
+            //TinctTaskService.StartSlaveService(slogname, mfilename);
             Thread.Sleep(2000);
             TinctTaskService.StartTaskService(q, mloggname, mfilename);
-       
+
 
 
 
@@ -52,14 +45,9 @@ namespace Tinct.TInctTaskMangement.UnitTest.Util
 
             q.QueueTinctTask(t1);
             q.QueueTinctTask(t2);
-           
 
-            Thread.Sleep(12000);
+            Console.Read();
 
-           
-
-            Assert.IsTrue(t2.Status==TinctTaskStatus.Completed);
-          
         }
     }
 }

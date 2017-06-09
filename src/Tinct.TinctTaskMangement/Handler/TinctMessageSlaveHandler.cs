@@ -11,12 +11,13 @@ using Tinct.Net.Communication.Cfg;
 using Tinct.Net.Communication.Interface;
 using Tinct.Net.Communication.Slave;
 using Tinct.Net.Message.Message;
-using Tinct.TinctTaskMangement.Util;
+using Tinct.TaskExcution.Enigine;
+using Tinct.TaskExcution.Util;
 
 namespace Tinct.TinctTaskMangement.Handler
 {
-   
-    public class TinctMessageSlaveHandler: MarshalByRefObject,IMessageHandler
+
+    public class TinctMessageSlaveHandler : MarshalByRefObject, IMessageHandler
     {
 
         public string LoggerName { get; set; }
@@ -30,7 +31,7 @@ namespace Tinct.TinctTaskMangement.Handler
         public bool HanderMessage(TinctMessage message)
         {
 
-          switch (message.MessageHeader.CommandType)
+            switch (message.MessageHeader.CommandType)
             {
                 case CommandType.Run:
                     new Task(() => { RunCommand(message.MessageBody); }).Start();
@@ -41,7 +42,8 @@ namespace Tinct.TinctTaskMangement.Handler
                     break;
                 case CommandType.SyncTask: SyncTaskCommand(message.MessageBody); break;
 
-                case CommandType.Deploy: DeployCommand(message.MessageBody);
+                case CommandType.Deploy:
+                    DeployCommand(message.MessageBody);
                     break;
             }
 
@@ -51,16 +53,24 @@ namespace Tinct.TinctTaskMangement.Handler
 
         private void DeployCommand(MessageBody messageBody)
         {
+            AssemblyExcuteEnvironment.Current.UnloadDomain(excuteDomainKey);
             var file1 = FileTask.GetObjectBySerializeString(messageBody.Datas);
+            string datas = TinctSlaveNode.Current.NodeInfo.NodeName;
             try
             {
-                AssemblyExcuteEnvironment.Current.UnloadDomain(excuteDomainKey);
                 File.WriteAllBytes(file1.FileName, file1.Content.ToArray());
+                datas += ",true";
             }
-            catch(Exception e)
+            catch
             {
-
+                //write failed
+                datas += ",false";
             }
+            TinctMessage message = new TinctMessage();
+            message.MessageHeader = new MessageHeader() { CommandType = CommandType.Deploy };
+            MessageBody body = new MessageBody();
+            message.MessageBody = body;
+            TinctSlaveNode.Current.SendMessage(TinctNodeCongratulations.MasterName, message);
         }
 
         private void RunCommand(MessageBody messageBody)
@@ -69,35 +79,38 @@ namespace Tinct.TinctTaskMangement.Handler
             AssemblyExcuteEnvironment.Current.AppDomainDicts.TryGetValue(excuteDomainKey, out AppDomain runtimeDomain);
             if (runtimeDomain == null)
             {
+                //Assembly.LoadFrom("Tinct.TaskExcution.dll");
                 AppDomain.CurrentDomain.SetShadowCopyFiles();
-                AppDomainSetup setup = new AppDomainSetup();
-                setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
-                setup.CachePath = setup.ApplicationBase;
-                setup.ShadowCopyFiles = "true";
-                setup.ShadowCopyDirectories = setup.ApplicationBase;
-                runtimeDomain = AppDomain.CreateDomain(excuteDomainKey, null, setup);
+                //AppDomainSetup setup = new AppDomainSetup();
+                //setup.ApplicationBase = AppDomain.CurrentDomain.BaseDirectory;
+                //setup.CachePath = setup.ApplicationBase;
+                //setup.ShadowCopyFiles = "true";
+                //setup.ShadowCopyDirectories = setup.ApplicationBase;
+                // runtimeDomain = AppDomain.CreateDomain(excuteDomainKey, null, setup);
+                runtimeDomain = AppDomain.CreateDomain(excuteDomainKey, AppDomain.CurrentDomain.Evidence, AppDomain.CurrentDomain.SetupInformation);
                 AssemblyExcuteEnvironment.Current.AppDomainDicts.TryAdd(excuteDomainKey, runtimeDomain);
-    
+
             }
 
             if (slaveRuntimeEngine == null)
             {
+
                 slaveRuntimeEngine = runtimeDomain.CreateInstanceFrom
-                 ("Tinct.TinctTaskMangement.dll",
-                 "Tinct.TinctTaskMangement.Enigine.AssemblyTaskExcute").Unwrap();
+                 ("Tinct.TaskExcution.dll",
+                 "Tinct.TaskExcution.Enigine.AssemblyTaskExcute").Unwrap();
             }
             try
             {
-                
+
                 MethodInfo method = slaveRuntimeEngine.GetType().GetMethod("ExuteTask");
-                method.Invoke(slaveRuntimeEngine, new object[] { messageBody.Datas, LoggerName,loggerFileName });
+                method.Invoke(slaveRuntimeEngine, new object[] { messageBody.Datas, LoggerName, loggerFileName });
 
             }
             catch (Exception e)
             {
 
             }
-           
+
         }
 
         private void CancelCommand(MessageBody messageBody)

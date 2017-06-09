@@ -65,6 +65,10 @@
       <Project>{dfd232e0-bef9-4ed0-8b57-651f9dd06a0f}</Project>
       <Name>Tinct.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Tinct.TaskExcution\Tinct.TaskExcution.csproj">
+      <Project>{d893e511-c44c-4267-af75-d8cb11b922b5}</Project>
+      <Name>Tinct.TaskExcution</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Tinct.TinctTaskMangement\Tinct.TinctTaskMangement.csproj">
       <Project>{771782bf-835b-4d6f-a163-99ab82a9c511}</Project>
       <Name>Tinct.TinctTaskMangement</Name>

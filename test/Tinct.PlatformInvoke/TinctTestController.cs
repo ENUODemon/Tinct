@@ -13,7 +13,7 @@ namespace Tinct.PlatformController
 
         public void LoadData1()
         {
-            System.Threading.Thread.Sleep(200000); 
+            System.Threading.Thread.Sleep(2000); 
             Console.WriteLine("test tinct  tinct 2000!");
         }
 

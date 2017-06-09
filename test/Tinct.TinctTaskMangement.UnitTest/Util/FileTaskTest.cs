@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Tinct.TinctTaskMangement.Util;
 using Tinct.TinctTaskMangement;
 using System.Threading;
-using Tinct.Net.Message.Message;
-using Tinct.Net.Communication.Slave;
-using Tinct.Net.Communication.Cfg;
-using Tinct.Net.Communication.Master;
+using Tinct.TaskExcution.Util;
 
 namespace Tinct.TInctTaskMangement.UnitTest.Util
 {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tinct.TinctTaskMangement.Util
+namespace Tinct.TaskExcution.Enigine
 {
     public class AssemblyExcuteEnvironment
     {

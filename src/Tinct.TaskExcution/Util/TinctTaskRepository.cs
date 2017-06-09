@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Tinct.TinctTaskMangement.Interface;
 using Tinct.Common.Log;
 using Newtonsoft.Json;
 using System.IO;
 using Tinct.Net.Message.Message;
 using System.Threading;
 using System.Collections.Concurrent;
+using Tinct.Common.Extension;
 
-
-namespace Tinct.TinctTaskMangement.Util
+namespace Tinct.TaskExcution.Util
 {
     public class TinctTaskRepository 
     {
@@ -42,7 +41,35 @@ namespace Tinct.TinctTaskMangement.Util
 
         public TinctTask DequeueTinctTask()
         {
-            syncTaskSignal.WaitOne();
+            if(queueTasks.Count==0)
+            {
+                if (queueWaittingTasks.Count == 0)
+                {
+                    syncTaskSignal.WaitOne();
+                }
+                else
+                {
+                    Thread.Sleep(5000);
+                    lock (syncWaittingtasks)
+                    {
+                        var task = queueWaittingTasks.FirstOrDefault();
+                        if (task == null)
+                        {
+                            syncTaskSignal.WaitOne();
+                        }
+                        else
+                        {
+                            //task.Status = TinctTaskStatus.WaittingToRun;
+                            queueWaittingTasks.Remove(task);
+                            QueueTinctTask(task);
+                        }
+                    }
+                }
+             
+            }
+
+
+          
             queueTasks.TryDequeue(out TinctTask result);
             if (queueTasks.Count == 0)
             {
@@ -73,6 +100,7 @@ namespace Tinct.TinctTaskMangement.Util
            
             logger.LogMessage(task.ToJsonSerializeString());
         }
+
         public void UpdateWaittingTask(TinctTask task)
         {
             
@@ -151,7 +179,23 @@ namespace Tinct.TinctTaskMangement.Util
         public void ClearAllTinctTasks()
         {
             queueTasks = new ConcurrentQueue<TinctTask>();
-            currentRuntimeTasks.Clear();
+
+            lock (syncruntimetasks)
+            {
+                foreach (var item in currentRuntimeTasks)
+                {
+                    item.Status = TinctTaskStatus.Faulted;
+                    item.EndTime = DateTimeExtension.GetTimeStamp();
+                    logger.LogMessage(item.ToJsonSerializeString());
+                }
+
+                currentRuntimeTasks.Clear();
+               
+            }
+            lock(syncWaittingtasks)
+            {
+                queueWaittingTasks.Clear();
+            }
           
         }
     }

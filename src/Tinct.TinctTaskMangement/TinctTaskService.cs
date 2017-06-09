@@ -9,8 +9,8 @@ using Tinct.Net.Communication.Cfg;
 using Tinct.Net.Communication.Master;
 using Tinct.Net.Communication.Slave;
 using Tinct.Net.Message.Message;
+using Tinct.TaskExcution.Util;
 using Tinct.TinctTaskMangement.Handler;
-using Tinct.TinctTaskMangement.Util;
 
 namespace Tinct.TinctTaskMangement
 {
@@ -61,7 +61,20 @@ namespace Tinct.TinctTaskMangement
             msg.MessageHeader.CommandType = CommandType.Deploy;
             msg.MessageBody = new MessageBody();
             msg.MessageBody.Datas = file.ToJsonSerializeString();
-            TinctMasterNode.Current.SendMessage(TinctNodeCongratulations.MasterName, msg);
+            TinctTaskRepository.Current.ClearAllTinctTasks();
+            for (int i = 0; i < TinctMasterNode.Current.SlaveNodes.Count; i++)
+            {
+                try
+                {
+                    TinctMasterNode.Current.SendMessage(TinctMasterNode.Current.SlaveNodes[i].NodeName, msg);
+                }
+                catch 
+                {
+                    ///when change salve node status,ingore that
+                }
+            }
+
+           
         }
 
     }
