@@ -16,7 +16,6 @@ namespace TinctMater
             TinctTaskRepository q = new TinctTaskRepository();
             var mloggname = "Masterlogger";
             var mfilename = "Log4net.config";
-            var slogname = "Slavelogger";
             TinctTaskService.StartMasterService();
 
             //Thread.Sleep(2000);

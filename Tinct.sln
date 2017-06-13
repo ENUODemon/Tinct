@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TinctSlave", "test\TinctSla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tinct.TaskExcution", "src\Tinct.TaskExcution\Tinct.TaskExcution.csproj", "{D893E511-C44C-4267-AF75-D8CB11B922B5}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tinct.Web", "src\Tinct.Web\Tinct.Web.csproj", "{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{D893E511-C44C-4267-AF75-D8CB11B922B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D893E511-C44C-4267-AF75-D8CB11B922B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D893E511-C44C-4267-AF75-D8CB11B922B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -88,5 +94,6 @@ Global
 		{9A4372EE-4C2E-4559-87EC-68A14512D85F} = {0FC6439E-C96D-4E2F-A150-4EC901E0DBAD}
 		{9A315A44-5087-49A9-B720-398EDC541C72} = {0FC6439E-C96D-4E2F-A150-4EC901E0DBAD}
 		{D893E511-C44C-4267-AF75-D8CB11B922B5} = {B4107961-75E9-4D39-8AFF-6BAD548CFED7}
+		{5A9FB676-C3C6-4FDB-870E-4DEC42EE3E02} = {B4107961-75E9-4D39-8AFF-6BAD548CFED7}
 	EndGlobalSection
 EndGlobal

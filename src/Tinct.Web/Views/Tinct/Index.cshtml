@@ -1,46 +1,20 @@
-﻿@{
-    ViewBag.Title = "Tinct";
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Tinct</h2>
 <label>Task</label>
 <br />
 <a href="/Tinct/Create" class="btn btn-sm btn-default">CreateTask</a>
-<br />
-<form action="/Tinct/UpLoadTasks" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="exampleInputFile">Task input</label>
-        <input type="file" id="exampleInputFile" name="file">
-        <p class="help-block">Please select your task file.</p>
-    </div>
-    <button type="submit" class="btn btn-default">Submit</button>
-</form>
-<br />
-<label>Platform Input</label>
-<br />
-<input type="text" id="platInput" />
-<input type="button" id="okBtn" value="OK" />
 <br />
 <label>ViewDetail</label>
 <br />
 <a href="/Tinct/Nodes" class="btn btn-sm btn-default">Nodes</a>
 <a href="/Tinct/Tasks" class="btn btn-sm btn-default">Tasks</a>
 <a href="/Tinct/Logs" class="btn btn-sm btn-default">Logs</a>
-<a href="/Tinct/Deploy" class="btn btn-sm btn-default">Deploy</a>
 <br />
 <label>Opeartion</label>
 <br />
 <a href="/Tinct/StartTask" class="btn btn-sm btn-primary">Start</a>
-
-<script type="text/javascript">
-    $("#okBtn").click(function () {
-        $.post("/Tinct/RunCertainTask", { platform: $("#platInput").val() }, function () {
-
-        })
-    });
-</script>
-
-
-
-
 

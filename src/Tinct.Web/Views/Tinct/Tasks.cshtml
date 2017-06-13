@@ -1,51 +1,33 @@
 ﻿
 @{
-    ViewBag.Title = "Tasks";
+    ViewData["Title"] = "Tasks";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <h2>Tasks</h2>
 
-
 <div class="form-inline">
-
-
     <div style="float:right" class="form-group">
         <input type="button" class="btn btn-default" value="Search" onclick="searchTasks(document.getElementsByName('searchContent')[0].value)" />
     </div>
     <div style="float:right" class="form-group">
         <input type="text" class="form-control" name="searchContent" />
-
-
-
     </div>
-
     <div style="float:right" class="form-group">
         <select class="selectpicker" name="sleTaskStatus" style="height:31px">
             <option value="0">ALL</option>
-            <option value="1">WaittingToRun</option>
-            <option value="2">Running</option>
-            <option value="3">Completed</option>
+            <option value="1">Waitting</option>
+            <option value="2">WaittingToRun</option>
+            <option value="3">Running</option>
+            <option value="4">Completed</option>
         </select>
     </div>
-
     <div style="float:right" class="form-group">
         <label for="inputTaskStatus" class="control-label" style="margin-top:5px;font-size:15px">TaskStatus</label>
-
     </div>
-
-
-
-
     <div style="float:right" class="form-group">
         <input type="submit" class="btn btn-default" value="Refresh" />
     </div>
-
-
-
-
-
-
-
 </div>
 <table class="table table-striped" name="tasksTable">
     <tr>
@@ -55,25 +37,28 @@
         <th>
             Name
         </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ControllerName", this)'>
-            Controller
-        </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Context.ActionName", this)'>
-            Action
+        <th>
+            DllName
         </th>
         <th>
-            Priority
+            ClassName
         </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Status", this)'>
-            TaskStatus
+        <th>
+            MethodName
         </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "CreateTime", this)'>
+        <th>
+            TargetNodeName
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
             CreateTime
         </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "StartTime", this)'>
+        <th>
             ExcuteTime
         </th>
-        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "EndTime", this)'>
+        <th>
             EndTime
         </th>
     </tr>
@@ -82,7 +67,6 @@
     <ul class="pager" style="text-align:right">
         <li>
             <input class="form-control" id="page" value="1" type="text" style="display:inline;width:4%" name="pageindex" />
-
         </li>
         <li>
             <a onclick="goPage()">Go</a>
@@ -92,15 +76,14 @@
 
     </ul>
 </nav>
-<input type="hidden" value='@Html.Raw(ViewBag.TaskInfosLists)' name="taskInfoLists" />
+<input type="hidden" value='@Html.Raw(ViewBag.Tasks)' name="taskInfoLists" />
 <input type="hidden" value="@Html.Raw(ViewBag.PageSize)" name="pagesize" />
 <script type="text/javascript">
 
-    function formatDatetime(datestring) {
-
-        var date = new Date(datestring);
-        return date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + ":" + date.getMilliseconds();
-    }
+    var tasks = JSON.parse(document.getElementsByName("taskInfoLists")[0].value);
+    var currenttasks = tasks;
+    var pageindex = 1;
+    var pagesize = parseInt(document.getElementsByName("pagesize")[0].value);
 
     var by = function (name, sortDirection) {
         return function (a, b) {
@@ -129,11 +112,9 @@
         }
     }
 
-
-
     function goPage() {
         pageindex = document.getElementsByName("pageindex")[0].value;
-        tasksPage(pagesize, pageindex, currenttasks);
+        tasksPage(pagesize, page, currenttasks);
     }
 
     function prev() {
@@ -144,8 +125,6 @@
         tasksPage(pagesize, pageindex, currenttasks);
         document.getElementsByName("pageindex")[0].value = pageindex;
     }
-
-
     function next() {
         pageindex++;
         tasksPage(pagesize, pageindex, currenttasks);
@@ -163,25 +142,32 @@
             case "0": filetertasks = tasks; break;
             case "1": $.each(tasks, function (k, v) {
                 if (
-                    v.Status.toLowerCase().indexOf('waittingtorun') != -1
-                   ) {
+                    v.Status.toLowerCase().indexOf('waitting') != -1
+                ) {
                     filetertasks[i++] = v;
                 }
             }); break;
-            case "2":
+            case "2": $.each(tasks, function (k, v) {
+                if (
+                    v.Status.toLowerCase().indexOf('waittingtorun') != -1
+                ) {
+                    filetertasks[i++] = v;
+                }
+            }); break;
+            case "3":
                 $.each(tasks, function (k, v) {
                     if (
                         v.Status.toLowerCase().indexOf('running') != -1
-                       ) {
+                    ) {
                         filetertasks[i++] = v;
                     }
                 });
                 break;
-            case "3":
+            case "4":
                 $.each(tasks, function (k, v) {
                     if (
                         v.Status.toLowerCase().indexOf('completed') != -1
-                       ) {
+                    ) {
                         filetertasks[i++] = v;
                     }
                 });
@@ -198,8 +184,9 @@
             if (
                 v.ID.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
                 || v.Name.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
-                || v.Context.ControllerName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
-                || v.Context.ActionName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1) {
+                || v.DllName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.ClassName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.MethodName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1) {
                 temptasks[j++] = v;
             }
         });
@@ -207,13 +194,6 @@
         tasksPage(pagesize, pageindex, currenttasks);
 
     }
-
-
-    var tasks = JSON.parse(document.getElementsByName("taskInfoLists")[0].value);
-    var currenttasks = tasks;
-    var pageindex = 1;
-    var pagesize = parseInt(document.getElementsByName("pagesize")[0].value);
-
 
     function tasksPage(pagesize, pageindex, tasks, sortName, object) {
         if (object != undefined) {
@@ -229,32 +209,27 @@
 
             tasks = tasks.sort(by(sortName, object.sortDirection))
         }
-
         var pagetasks = tasks.slice(pagesize * (pageindex - 1), pagesize * pageindex);
-
         $(document.getElementsByName("taskinfo")).remove();
         var table = document.getElementsByName("tasksTable")[0];
-
-
-
         $.each(pagetasks, function f(k, v) {
-
             var ele = $('<tr name="taskinfo"></tr>');
             ele.append('<td>' + v.ID + '</td>');
             ele.append('<td>' + v.Name + '</td>');
-            ele.append('<td>' + v.Context.ControllerName + '</td>');
-            ele.append('<td>' + v.Context.ActionName + '</td>');
-            ele.append('<td>' + v.Priority + '</td>');
+            ele.append('<td>' + v.DllName + '</td>');
+            ele.append('<td>' + v.ClassName + '</td>');
+            ele.append('<td>' + v.MethodName + '</td>');
+            ele.append('<td>' + v.TargetNodeName + '</td>');
             ele.append('<td>' + v.Status + '</td>');
-            ele.append('<td>' + formatDatetime(v.CreateTime) + '</td>');
-            ele.append('<td>' + formatDatetime(v.StartTime) + '</td>');
-            ele.append('<td>' + formatDatetime(v.EndTime) + '</td>');
+            ele.append('<td>' + v.CreateTime + '</td>');
+            ele.append('<td>' + v.StartTime + '</td>');
+            ele.append('<td>' + v.EndTime + '</td>');
             $(table).append(ele);
         });
 
 
     }
-    tasksPage(pagesize, pageindex, currenttasks);
+
+    window.onload = function () { tasksPage(pagesize, pageindex, currenttasks); };
+
 </script>
-
-

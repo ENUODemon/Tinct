@@ -198,5 +198,21 @@ namespace Tinct.TaskExcution.Util
             }
           
         }
+
+        public List<TinctTask> GetCurrentTasks()
+        {
+            List<TinctTask> lists = new List<TinctTask>();
+
+            lock (syncruntimetasks)
+            {
+                lists.AddRange(currentRuntimeTasks.ToArray());
+            }
+            lock(syncWaittingtasks)
+            {
+                lists.AddRange(queueWaittingTasks.ToArray());
+            }
+
+            return lists;
+        }
     }
 }

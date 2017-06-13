@@ -14,42 +14,53 @@ using Tinct.TinctTaskMangement.Handler;
 
 namespace Tinct.TinctTaskMangement
 {
-    public class TinctTaskService
+    public static class TinctTaskService
     {
-       
+
+        private static bool masterServiceIsOn = false;
+
+        private static bool taskServiceIsOn = false;
+
+        private static bool slaveServiceIsOn = false;
+
         public static void StartMasterService()
         {
-           
-           
-            TinctMasterNode.Current.MessageHandlers.Add(new TinctMessageMasterHandler());
-            TinctMasterNode.Current.StartMaster();
-          
-
+            if (!masterServiceIsOn)
+            {
+                TinctMasterNode.Current.MessageHandlers.Add(new TinctMessageMasterHandler());
+                TinctMasterNode.Current.StartMaster();
+                masterServiceIsOn = true;
+            }
         }
 
         public static void StartSlaveService(string loggerName, string loggerFileName)
         {
-          
-            TinctMessage msg = new TinctMessage();
-            msg.MessageBody = new MessageBody();
-            msg.MessageBody.Datas = "connect";
-            var slavehandler = new TinctMessageSlaveHandler();
-            slavehandler.LoggerName = loggerName;
-            slavehandler.loggerFileName = loggerFileName;
-            TinctSlaveNode.Current.MessageHandlers.Add(slavehandler);
-            TinctSlaveNode.Current.StartSlave();
-            TinctSlaveNode.Current.SendMessage(TinctNodeCongratulations.MasterName, msg);
-
+            if (!slaveServiceIsOn)
+            {
+                TinctMessage msg = new TinctMessage();
+                msg.MessageBody = new MessageBody();
+                msg.MessageBody.Datas = "connect";
+                var slavehandler = new TinctMessageSlaveHandler();
+                slavehandler.LoggerName = loggerName;
+                slavehandler.loggerFileName = loggerFileName;
+                TinctSlaveNode.Current.MessageHandlers.Add(slavehandler);
+                TinctSlaveNode.Current.StartSlave();
+                TinctSlaveNode.Current.SendMessage(TinctNodeCongratulations.MasterName, msg);
+                slaveServiceIsOn = true;
+            }
         }
 
         public static void StartTaskService(TinctTaskRepository repository, string loggerName, string loggerFileName)
         {
-            var logger = TinctLoggerManger.GetLogger(loggerName, loggerFileName);
-            repository.logger = logger;
-            TinctTaskMangement.TinctTaskManeger tm = new TinctTaskMangement.TinctTaskManeger();
-
-            tm.TaskRepository = repository;
-            tm.Start();
+            if (!taskServiceIsOn)
+            {
+                var logger = TinctLoggerManger.GetLogger(loggerName, loggerFileName);
+                repository.logger = logger;
+                TinctTaskMangement.TinctTaskManeger tm = new TinctTaskMangement.TinctTaskManeger();
+                tm.TaskRepository = repository;
+                tm.Start();
+                taskServiceIsOn = true;
+            }
         }
 
         public static void DeployFile(FileTask file)
@@ -77,5 +88,9 @@ namespace Tinct.TinctTaskMangement
            
         }
 
+        public static List<TinctTask> GetCurrentTasks()
+        {
+            return TinctTaskRepository.Current.GetCurrentTasks();
+        }
     }
 }

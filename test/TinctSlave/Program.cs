@@ -11,7 +11,7 @@ namespace TinctSlave
     {
         static void Main(string[] args)
         {
-            var mloggname = "Masterlogger";
+
             var mfilename = "Log4net.config";
             var slogname = "Slavelogger";
             TinctTaskService.StartSlaveService(slogname, mfilename);

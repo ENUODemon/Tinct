@@ -1,60 +1,8 @@
-﻿@{
-   
+
+@{
+    ViewData["Title"] = "Nodes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>@ViewBag.Title</h2>
-<script type="text/javascript">
-    setTimeout(function () {
-        location.reload();
-    }, 10000, null)
-</script>
-<label>Node</label>
-<table class="table table-striped">
-    <tr>
-        <th>NodeName</th>
-        <th>LastUpdateTime</th>
-    </tr>
-    @foreach (var nodeInfo in ViewBag.NodeInfosLists)
-    {
-        <tr>
-            <td>@nodeInfo.NodeName</td>
-            <td>@nodeInfo.LastUpdateTime</td>
-        </tr>
-    }
-</table>
-<label>NodeInvoke</label>
-<table class="table table-striped">
-    <tr>
-        <th>NodeName</th>
-        <th>TaskID</th>
-        <th>Controller</th>
-        <th>Action</th>
-        <th>NodeStatus</th>
-    </tr>
-    @foreach (var nodeInfo in ViewBag.NodeInfosLists)
-    {
-        foreach (var nodeTasknfo in nodeInfo.TinctTaskInfoList)
-        {
-            <tr>
-                <td>
-                    @nodeTasknfo.Context.NodeName
-                </td>
-                <td>
-                    @nodeTasknfo.ID
-                </td>
-                <td>
-                    @nodeTasknfo.Context.ControllerName
-                </td>
-                <td>
-                    @nodeTasknfo.Context.ActionName
-                </td>
-                <td>
-                    @nodeTasknfo.Status
-                </td>
-            </tr>
-        }
-
-    }
-
-</table>
+<h2>Nodes</h2>
 
