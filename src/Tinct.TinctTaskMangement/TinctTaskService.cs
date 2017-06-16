@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tinct.Common.Extension;
 using Tinct.Common.Log;
 using Tinct.Net.Communication.Cfg;
 using Tinct.Net.Communication.Master;
+using Tinct.Net.Communication.Node;
 using Tinct.Net.Communication.Slave;
 using Tinct.Net.Message.Message;
 using Tinct.TaskExcution.Util;
@@ -92,5 +94,18 @@ namespace Tinct.TinctTaskMangement
         {
             return TinctTaskRepository.Current.GetCurrentTasks();
         }
+
+        public static List<NodeInfo> GetCurrentNodes()
+        {
+            List<NodeInfo> nodes = new List<NodeInfo>();
+            nodes.Add(new NodeInfo()
+            {
+                LastUpdateTime = DateTimeExtension.GetTimeStamp(), NodeName="test",
+                 Status=NodeStatus.Running
+            });
+            return nodes;
+          //  return TinctMasterNode.Current.SlaveNodes.ToArray().ToList();
+        }
+
     }
 }

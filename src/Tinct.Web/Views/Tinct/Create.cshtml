@@ -1,0 +1,68 @@
+
+@{
+    ViewData["Title"] = "CreateTask";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/i18n/defaults-*.min.js"></script>
+<h2>Create</h2>
+<form class="form-horizontal" action="/Tinct/CreateTask" method="post">
+
+    <div class="form-group">
+        <label for="inputTaskName" class="col-sm-2 control-label">Name</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputTaskName" name="Name">
+        </div>
+    </div>
+ 
+    @*<div class="form-group">
+        <label for="inputTaskStatus" class="col-sm-2 control-label">Status</label>
+        <div class="col-sm-10">
+            <select class="selectpicker" name="Status">
+                <option>WaittingToRun</option>
+                <option>Waitting</option>
+            </select>
+
+        </div>
+    </div>*@
+    <div class="form-group">
+        <label for="inputDllName" class="col-sm-2 control-label">DllName</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputDllName" name="DllName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputNamespaceName" class="col-sm-2 control-label">NamespaceName</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputNamespaceName" name="NamespaceName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputClassName" class="col-sm-2 control-label">ClassName</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputClassName" name="ClassName">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="inputMethodName" class="col-sm-2 control-label">MethodName</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputMethodName" name="MethodName">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <label for="inputData" class="col-sm-2 control-label">Data</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="inputData" name="Data">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-1 col-sm-10">
+            <button type="submit" class="btn btn-default">Create</button>
+        </div>
+    </div>
+</form>
+

@@ -7,6 +7,8 @@ using Tinct.TinctTaskMangement;
 using Tinct.TaskExcution.Util;
 using System.Threading;
 using System.IO;
+using Tinct.Web.ViewModel;
+using Tinct.Common.Extension;
 
 namespace Tinct.Web.Controllers
 {
@@ -31,7 +33,7 @@ namespace Tinct.Web.Controllers
             t1.ClassName = "TinctTestController";
             t1.MethodName = "LoadData1";
             t1.Datas = "test";
-
+            Thread.Sleep(1000);
             TinctTask t2 = new TinctTask();
             t2.Name = "test";
             t2.DllName = "Tinct.PlatformController";
@@ -48,6 +50,12 @@ namespace Tinct.Web.Controllers
 
         public IActionResult Index()
         {
+            return View();
+        }
+
+        public ActionResult Create()
+        {
+
             return View();
         }
 
@@ -71,7 +79,34 @@ namespace Tinct.Web.Controllers
 
         public IActionResult Nodes()
         {
+            List<NodeInfoViewModel> lists = new List<NodeInfoViewModel>();
+            var nodes= TinctTaskService.GetCurrentNodes();
+            foreach (var node in nodes)
+            {
+                NodeInfoViewModel m = new NodeInfoViewModel();
+                m.NodeName = node.NodeName;
+                m.LastUpdateTime = DateTimeExtension.GetTimeFromTimeSpan(node.LastUpdateTime);
+                m.Status = node.Status;
+                lists.Add(m);
+            }
+
+            ViewBag.Nodes = lists;
+            ViewBag.PageSize = 10;
             return View();
+        }
+
+        public IActionResult CreateTask()
+        {
+            TinctTask t = new TinctTask();
+            t.Name = Request.Form["Name"];
+            t.Datas = Request.Form["Data"];
+            t.DllName = Request.Form["DllName"];
+            t.ClassName = Request.Form["ClassName"];
+            t.NamespaceName = Request.Form["NamespaceName"];
+            t.MethodName = Request.Form["MethodName"];
+
+            TinctTaskRepository.Current.QueueTinctTask(t);
+            return View("Index");
         }
     }
 }

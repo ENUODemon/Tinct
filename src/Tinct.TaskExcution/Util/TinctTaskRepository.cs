@@ -169,13 +169,6 @@ namespace Tinct.TaskExcution.Util
             }
         }
 
-        public List<string> GetTaskRuntimeNodeNames(TinctTask task)
-        {
-            List<string> result = new List<string>();
-            var list = currentRuntimeTasks.Where(t => t.ClassName == task.ClassName && t.MethodName == task.MethodName).Select(t => t.TargetNodeName);
-            return list == null?null:list.ToList() ;
-        }
-
         public void ClearAllTinctTasks()
         {
             queueTasks = new ConcurrentQueue<TinctTask>();
@@ -190,14 +183,23 @@ namespace Tinct.TaskExcution.Util
                 }
 
                 currentRuntimeTasks.Clear();
-               
+
             }
-            lock(syncWaittingtasks)
+            lock (syncWaittingtasks)
             {
                 queueWaittingTasks.Clear();
             }
-          
+
         }
+
+        public List<string> GetTaskRuntimeNodeNames(TinctTask task)
+        {
+            List<string> result = new List<string>();
+            var list = currentRuntimeTasks.Where(t => t.ClassName == task.ClassName && t.MethodName == task.MethodName).Select(t => t.TargetNodeName);
+            return list == null?null:list.ToList() ;
+        }
+
+
 
         public List<TinctTask> GetCurrentTasks()
         {

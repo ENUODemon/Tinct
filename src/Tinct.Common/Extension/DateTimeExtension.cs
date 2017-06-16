@@ -14,5 +14,12 @@ namespace Tinct.Common.Extension
             return Convert.ToInt64(ts.TotalMilliseconds);
         }
 
+        public static DateTime GetTimeFromTimeSpan(long time)
+        {
+            DateTime start = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            DateTime date = start.AddMilliseconds(time).ToLocalTime();
+            return date;
+        }
+
     }
 }

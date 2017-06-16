@@ -34,31 +34,34 @@
         <th>
             ID
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Name", this)'>
             Name
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "DllName", this)'>
             DllName
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "NamespaceName", this)'>
+            NamespaceName
+        </th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "ClassName", this)'>
             ClassName
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "MethodName", this)'>
             MethodName
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "TargetNodeName", this)'>
             TargetNodeName
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "Status", this)'>
             Status
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "CreateTime", this)'>
             CreateTime
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "ExcuteTime", this)'>
             ExcuteTime
         </th>
-        <th>
+        <th onclick='tasksPage(pagesize, pageindex,currenttasks, "EndTime", this)'>
             EndTime
         </th>
     </tr>
@@ -89,24 +92,18 @@
         return function (a, b) {
             if (sortDirection == "asc") {
 
-                if (name.indexOf('.') > 0) {
-                    name = name.split('.');
-                    return a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
-                }
-                if (name.length > 1 && typeof name != 'string') {
-                    return a[name[0]][name[1]].localeCompare(b[name[0]][name[1]]);
+                if (typeof a[name] == 'number')
+                {
+                    return a[name] - b[name]
                 }
                 return a[name].localeCompare(b[name]);
             }
             else if (sortDirection == "desc") {
+                if (typeof a[name] == 'number')
+                {
+                    return b[name] - a[name]
+                }
 
-                if (name.indexOf('.') > 0) {
-                    name = name.split('.');
-                    return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
-                }
-                if (name.length > 1 && typeof name != 'string') {
-                    return b[name[0]][name[1]].localeCompare(a[name[0]][name[1]]);
-                }
                 return b[name].localeCompare(a[name]);
             }
         }
@@ -186,6 +183,7 @@
                 || v.Name.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
                 || v.DllName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
                 || v.ClassName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
+                || v.NamespaceName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1
                 || v.MethodName.toLowerCase().indexOf(textcontent.toLowerCase()) != -1) {
                 temptasks[j++] = v;
             }
@@ -217,13 +215,14 @@
             ele.append('<td>' + v.ID + '</td>');
             ele.append('<td>' + v.Name + '</td>');
             ele.append('<td>' + v.DllName + '</td>');
+            ele.append('<td>' + v.NamespaceName + '</td>');
             ele.append('<td>' + v.ClassName + '</td>');
             ele.append('<td>' + v.MethodName + '</td>');
             ele.append('<td>' + v.TargetNodeName + '</td>');
             ele.append('<td>' + v.Status + '</td>');
-            ele.append('<td>' + v.CreateTime + '</td>');
-            ele.append('<td>' + v.StartTime + '</td>');
-            ele.append('<td>' + v.EndTime + '</td>');
+            ele.append('<td>' + new Date(v.CreateTime).toLocaleString() + '</td>');
+            ele.append('<td>' + new Date(v.StartTime).toLocaleString() + '</td>');
+            ele.append('<td>' + new Date(v.EndTime).toLocaleString()+ '</td>');
             $(table).append(ele);
         });
 

@@ -5,4 +5,18 @@
 }
 
 <h2>Nodes</h2>
-
+<table class="table table-striped">
+    <tr>
+        <th>NodeName</th>
+        <th>LastUpdateTime</th>
+        <th>Status</th>
+    </tr>
+    @foreach (var nodeInfo in ViewBag.Nodes)
+    {
+        <tr>
+            <td>@nodeInfo.NodeName</td>
+            <td>@nodeInfo.LastUpdateTime</td>
+            <td>@nodeInfo.Status</td>
+        </tr>
+    }
+</table>
